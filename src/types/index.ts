@@ -1,3 +1,4 @@
+
 export interface Employee {
   id: string; // Employee ID
   name: string;
@@ -20,3 +21,9 @@ export interface AttendanceRecord {
 }
 
 export interface User { // Logged-in user
+  id: string;
+  name: string;
+  designation: 'HR' | 'Employee';
+  email?: string;
+  phone?: string;
+}

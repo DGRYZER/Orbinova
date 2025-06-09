@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -7,7 +8,7 @@ import * as z from 'zod';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { updateEmployee } from '@/lib/employeeService';
 import type { Employee } from '@/types';
@@ -41,7 +42,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
   });
 
   useEffect(() => {
-    if (employee) {
+    if (employee && isOpen) { // Reset form only when employee data is available and modal is open
       form.reset({
         id: employee.id,
         name: employee.name,
@@ -51,27 +52,30 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
         phone: employee.phone || '',
       });
     }
-  }, [employee, form, isOpen]);
+  }, [employee, form, isOpen]); // Add isOpen to dependencies
 
   if (!employee) return null;
 
   const onSubmit: SubmitHandler<EditEmployeeFormValues> = async (data) => {
     setIsSubmitting(true);
-    const employeeToUpdate: Employee = {
-        id: data.id,
+    const employeeToUpdate: Partial<Employee> & { id: string } = { // Use Partial<Employee> for update
+        id: data.id, // id is always present
         name: data.name,
         designation: data.designation,
         email: data.email,
         phone: data.phone,
-        // Conditionally update password if a new one is provided
-        ...(data.passwordInput && { password: data.passwordInput }),
     };
+    // Conditionally update password if a new one is provided and is not empty
+    if (data.passwordInput && data.passwordInput.trim() !== '') {
+        employeeToUpdate.password = data.passwordInput;
+    }
 
-    const result = updateEmployee(employeeToUpdate);
+
+    const result = updateEmployee(employeeToUpdate as Employee); // Cast to Employee after conditional password
     if (result.success) {
       toast({ title: "Success", description: "Employee details updated." });
       onEmployeeUpdated();
-      onClose();
+      onClose(); // This will also trigger useEffect to reset form if modal reopens
     } else {
       toast({ variant: "destructive", title: "Error", description: result.message || "Failed to update employee." });
     }
@@ -101,7 +105,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
             <Label htmlFor="edit-designation" className="text-right">Designation</Label>
             <Select
               onValueChange={(value) => form.setValue('designation', value as 'Employee' | 'HR')}
-              defaultValue={form.getValues('designation')}
+              value={form.watch('designation')} // Use watch to ensure Select updates
             >
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Select designation" />
@@ -121,4 +125,24 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="edit-email" className="text-right">Email</Label>
             <Input id="edit-email" type="email" {...form.register('email')} className="col-span-3" />
-            {form.formS<ctrl63>
+            {form.formState.errors.email && <p className="col-span-4 text-right text-sm text-destructive">{form.formState.errors.email.message}</p>}
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="edit-phone" className="text-right">Phone</Label>
+            <Input id="edit-phone" {...form.register('phone')} className="col-span-3" />
+            {form.formState.errors.phone && <p className="col-span-4 text-right text-sm text-destructive">{form.formState.errors.phone.message}</p>}
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            </DialogClose>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -22,4 +23,8 @@ export default function LiveClock() {
       </div>
       <div className="flex items-center space-x-1">
         <Clock className="h-4 w-4" />
-        <span>{format(time, 'h:mm:
+        <span>{format(time, 'h:mm:ss a')}</span>
+      </div>
+    </div>
+  );
+}

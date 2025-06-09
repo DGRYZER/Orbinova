@@ -1,3 +1,4 @@
+
 "use client";
 
 import MarkAttendanceCard from "@/components/employee/MarkAttendanceCard";
@@ -35,3 +36,8 @@ export default function EmployeeDashboardPage() {
         </div>
         <div className="lg:col-span-2">
           <MyAttendanceTable />
+        </div>
+      </div>
+    </div>
+  );
+}

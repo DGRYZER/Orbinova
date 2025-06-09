@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -122,4 +123,10 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Add Employee
-            </
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
