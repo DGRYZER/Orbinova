@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -6,7 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { UserCircle, Mail, Phone, Edit3 } from "lucide-react";
+import { UserCircle, Mail, Phone, Edit3, CheckCircle, ShieldAlert } from "lucide-react"; // Added icons
 
 export default function AccountPage() {
   const { currentUser } = useAuth();
@@ -44,21 +45,34 @@ export default function AccountPage() {
             <Input id="employeeId" value={currentUser.id} readOnly disabled />
           </div>
           
-          {/* Example fields, can be expanded with actual data if stored */}
           <div className="space-y-1">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" value={currentUser.email || "Not set"} readOnly disabled />
+            <div className="flex items-center">
+              <Input id="email" value={currentUser.email || "Not set"} readOnly disabled className="flex-grow" />
+              {/* Placeholder for email verification icon if implemented */}
+            </div>
           </div>
 
           <div className="space-y-1">
             <Label htmlFor="phone">Phone</Label>
-            <Input id="phone" value={currentUser.phone || "Not set"} readOnly disabled />
+            <div className="flex items-center gap-2">
+              <Input id="phone" value={currentUser.phone || "Not set"} readOnly disabled className="flex-grow" />
+              {currentUser.isPhoneVerified ? (
+                <CheckCircle className="h-5 w-5 text-green-500" title="Phone Verified" />
+              ) : (
+                currentUser.phone && <ShieldAlert className="h-5 w-5 text-yellow-500" title="Phone Not Verified" />
+              )}
+            </div>
           </div>
           
           <Button variant="outline" className="mt-4 w-full sm:w-auto" disabled>
             <Edit3 className="mr-2 h-4 w-4" /> Edit Profile (Feature coming soon)
           </Button>
+           <p className="text-xs text-muted-foreground mt-2">
+            To change your password or update phone number, please contact HR. Self-service options are coming soon.
+          </p>
         </CardContent>
       </Card>
     </div>
   );
+}

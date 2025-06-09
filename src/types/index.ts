@@ -6,6 +6,7 @@ export interface Employee {
   password?: string; // Password will be set by HR or for initial HR
   email?: string;
   phone?: string;
+  isPhoneVerified?: boolean; // New field for phone verification status
 }
 
 export interface AttendanceRecord {
@@ -26,4 +27,5 @@ export interface User { // Logged-in user
   designation: 'HR' | 'Employee';
   email?: string;
   phone?: string;
+  isPhoneVerified?: boolean; // New field for phone verification status
 }

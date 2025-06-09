@@ -1,3 +1,4 @@
+
 import type { Employee, User } from '@/types';
 import { getItem, setItem, removeItem } from './localStorageUtils';
 
@@ -15,6 +16,7 @@ export function initializeDefaultAdmin(): void {
         designation: 'HR',
         password: 'hrpassword', // Default password for HR
         email: 'hr@example.com',
+        isPhoneVerified: false, // Default for new admin
       };
       setItem<Employee[]>(EMPLOYEES_KEY, [defaultAdmin]);
     }
@@ -34,8 +36,9 @@ export function login(employeeId: string, passwordAttempt: string, designationAt
       id: employee.id,
       name: employee.name,
       designation: employee.designation,
-      email: employee.email, // Make sure to include email if it exists on Employee and User types
-      phone: employee.phone, // Make sure to include phone if it exists on Employee and User types
+      email: employee.email,
+      phone: employee.phone,
+      isPhoneVerified: employee.isPhoneVerified || false,
     };
     setItem<User>(CURRENT_USER_KEY, currentUser);
     return currentUser;
