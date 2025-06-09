@@ -17,6 +17,18 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     }
   }, [currentUser, isLoading, router]);
 
+  // Redirect to role-specific dashboard if on base /dashboard path
+  // This hook must be called before any conditional returns.
+  useEffect(() => {
+    if (currentUser && router.pathname === '/dashboard') {
+      if (currentUser.designation === 'HR') {
+        router.replace('/dashboard/hr');
+      } else {
+        router.replace('/dashboard/employee');
+      }
+    }
+  }, [currentUser, router, router.pathname]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
@@ -29,20 +41,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   if (!currentUser) {
     // This state should ideally be brief due to the useEffect redirect.
     // You could show a redirecting message or just null.
-    return null; 
+    return null;
   }
-
-  // Redirect to role-specific dashboard if on base /dashboard path
-  useEffect(() => {
-    if (currentUser && router.pathname === '/dashboard') {
-      if (currentUser.designation === 'HR') {
-        router.replace('/dashboard/hr');
-      } else {
-        router.replace('/dashboard/employee');
-      }
-    }
-  }, [currentUser, router, router.pathname]);
-
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
