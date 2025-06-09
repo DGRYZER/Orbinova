@@ -26,19 +26,22 @@ const employeeSchema = z.object({
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
 interface AddEmployeeModalProps {
-  onEmployeeAdded: () => void; // Callback to refresh employee list
+  onEmployeeAdded: () => void;
 }
 
 export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
 
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
   const [showPhoneOtpDialog, setShowPhoneOtpDialog] = useState(false);
   const [phoneOtpInput, setPhoneOtpInput] = useState('');
-  const [generatedPhoneOtp, setGeneratedPhoneOtp] = useState('');
+  // OTP generation and actual sending would be handled by the backend.
+  // const [generatedPhoneOtp, setGeneratedPhoneOtp] = useState(''); 
 
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
@@ -57,7 +60,9 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
   const resetOtpStates = () => {
     setShowPhoneOtpDialog(false);
     setPhoneOtpInput('');
-    setGeneratedPhoneOtp('');
+    // setGeneratedPhoneOtp('');
+    setIsSendingOtp(false);
+    setIsVerifyingOtp(false);
   };
   
   const handleOpenChange = (open: boolean) => {
@@ -70,26 +75,66 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
     }
   };
 
-  const handleSendPhoneOtp = () => {
+  const handleSendPhoneOtp = async () => {
     const phoneValue = form.getValues('phone');
     if (!phoneValue || phoneValue.trim() === '') {
       toast({ variant: "destructive", title: "Error", description: "Please enter a phone number first." });
       return;
     }
-    const otp = Math.floor(100000 + Math.random() * 900000).toString(); 
-    setGeneratedPhoneOtp(otp);
-    toast({ title: "OTP Sent (Simulated)", description: `An OTP has been 'sent' to ${phoneValue}. (OTP for testing: ${otp})` });
-    setShowPhoneOtpDialog(true);
+    setIsSendingOtp(true);
+    try {
+      // Placeholder for API call to send OTP
+      // const response = await fetch('/api/send-phone-otp', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ phone: phoneValue }),
+      // });
+      // if (!response.ok) throw new Error('Failed to send OTP');
+      // For simulation, we just proceed to show OTP dialog
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+
+      toast({ title: "OTP Sent (Simulated)", description: `An OTP has been 'sent' to ${phoneValue}.` });
+      setShowPhoneOtpDialog(true);
+    } catch (error) {
+      toast({ variant: "destructive", title: "Error", description: (error as Error).message || "Could not send OTP. Please try again." });
+    } finally {
+      setIsSendingOtp(false);
+    }
   };
 
-  const handleVerifyPhoneOtp = () => {
-    if (phoneOtpInput === generatedPhoneOtp) {
-      setIsPhoneVerified(true);
-      toast({ title: "Success", description: "Phone number verified successfully." });
-      setShowPhoneOtpDialog(false);
-      setPhoneOtpInput('');
-    } else {
-      toast({ variant: "destructive", title: "Error", description: "Invalid OTP. Please try again." });
+  const handleVerifyPhoneOtp = async () => {
+    const phoneValue = form.getValues('phone');
+    if (!phoneOtpInput) {
+        toast({ variant: "destructive", title: "Error", description: "Please enter the OTP." });
+        return;
+    }
+    setIsVerifyingOtp(true);
+    try {
+      // Placeholder for API call to verify OTP
+      // const response = await fetch('/api/verify-phone-otp', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ phone: phoneValue, otp: phoneOtpInput }),
+      // });
+      // if (!response.ok) throw new Error('Invalid OTP');
+      // const data = await response.json();
+      // if (!data.success) throw new Error('Invalid OTP');
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+      // For simulation, we'll assume any 6-digit OTP is correct for now if you need to test success.
+      // In a real app, this would be checked by the backend.
+      if (phoneOtpInput.length === 6) { // Simple client-side check for simulation
+          setIsPhoneVerified(true);
+          toast({ title: "Success", description: "Phone number verified successfully." });
+          setShowPhoneOtpDialog(false);
+          setPhoneOtpInput('');
+      } else {
+          throw new Error("Invalid OTP format (Simulated - enter 6 digits).");
+      }
+
+    } catch (error) {
+      toast({ variant: "destructive", title: "Error", description: (error as Error).message || "Invalid OTP. Please try again." });
+    } finally {
+        setIsVerifyingOtp(false);
     }
   };
 
@@ -108,14 +153,13 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
     if (result.success) {
       toast({ title: "Success", description: "Employee added successfully." });
       onEmployeeAdded();
-      setIsOpen(false); 
+      handleOpenChange(false); 
     } else {
       toast({ variant: "destructive", title: "Error", description: result.message || "Failed to add employee." });
     }
     setIsSubmitting(false);
   };
   
-  // Effect to reset phone verification if phone number changes
   useEffect(() => {
     setIsPhoneVerified(false);
   }, [watchedPhone]);
@@ -176,7 +220,7 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  className="absolute right-0 top-0 h-full px-3 py-2"
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex={-1}
                 >
@@ -193,12 +237,24 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="phone" className="text-right">Phone</Label>
               <div className="col-span-3 flex items-center gap-2">
-                <Input id="phone" {...form.register('phone')} className="flex-grow" disabled={isPhoneVerified && !!watchedPhone && watchedPhone.trim() !== ''} />
+                <Input 
+                    id="phone" 
+                    {...form.register('phone')} 
+                    className="flex-grow" 
+                    disabled={isPhoneVerified && !!watchedPhone && watchedPhone.trim() !== ''} 
+                />
                 {isPhoneVerified && watchedPhone && watchedPhone.trim() !== '' ? (
                   <CheckCircle className="h-5 w-5 text-green-500" />
                 ) : (
                   watchedPhone && watchedPhone.trim() !== '' && (
-                    <Button type="button" size="sm" variant="outline" onClick={handleSendPhoneOtp} disabled={!form.watch('phone') || (!!form.watch('phone') && isPhoneVerified) }>
+                    <Button 
+                        type="button" 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={handleSendPhoneOtp} 
+                        disabled={isSendingOtp || (!form.watch('phone') || (!!form.watch('phone') && isPhoneVerified))}
+                    >
+                      {isSendingOtp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                       Verify
                     </Button>
                   )
@@ -226,6 +282,7 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
             <DialogTitle>Verify Phone Number</DialogTitle>
             <DialogDescription>
               An OTP has been 'sent' to {form.getValues('phone')}. Please enter it below.
+              (For testing, enter a 6-digit number).
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -239,10 +296,15 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => {setShowPhoneOtpDialog(false); resetOtpStates();}}>Cancel</Button>
-            <Button type="button" onClick={handleVerifyPhoneOtp}>Verify OTP</Button>
+            <Button type="button" onClick={handleVerifyPhoneOtp} disabled={isVerifyingOtp}>
+                {isVerifyingOtp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Verify OTP
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
   );
 }
+
+    

@@ -8,7 +8,7 @@ import * as z from 'zod';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"; // Removed DialogClose here
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { updateEmployee } from '@/lib/employeeService';
 import type { Employee } from '@/types';
@@ -41,35 +41,37 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
   const [isPhoneVerifiedState, setIsPhoneVerifiedState] = useState(employee?.isPhoneVerified || false);
   const [showPhoneOtpDialog, setShowPhoneOtpDialog] = useState(false);
   const [phoneOtpInput, setPhoneOtpInput] = useState('');
-  const [generatedPhoneOtp, setGeneratedPhoneOtp] = useState('');
   const [originalPhone, setOriginalPhone] = useState(employee?.phone || '');
-
+  const [isSendingPhoneOtp, setIsSendingPhoneOtp] = useState(false);
+  const [isVerifyingPhoneOtp, setIsVerifyingPhoneOtp] = useState(false);
 
   const [showPasswordChangeOtpDialog, setShowPasswordChangeOtpDialog] = useState(false);
   const [passwordChangeOtpInput, setPasswordChangeOtpInput] = useState('');
-  const [generatedPasswordChangeOtp, setGeneratedPasswordChangeOtp] = useState('');
   const [isPasswordChangeOtpVerified, setIsPasswordChangeOtpVerified] = useState(false);
   const [passwordChangeAttempted, setPasswordChangeAttempted] = useState(false);
-
+  const [isSendingPasswordOtp, setIsSendingPasswordOtp] = useState(false);
+  const [isVerifyingPasswordOtp, setIsVerifyingPasswordOtp] = useState(false);
 
   const form = useForm<EditEmployeeFormValues>({
     resolver: zodResolver(editEmployeeSchema),
   });
   
   const watchedPhone = form.watch('phone');
+  const watchedPasswordInput = form.watch('passwordInput');
 
   const resetAllOtpStates = useCallback(() => {
     setShowPhoneOtpDialog(false);
     setPhoneOtpInput('');
-    setGeneratedPhoneOtp('');
+    setIsSendingPhoneOtp(false);
+    setIsVerifyingPhoneOtp(false);
     
     setShowPasswordChangeOtpDialog(false);
     setPasswordChangeOtpInput('');
-    setGeneratedPasswordChangeOtp('');
     setIsPasswordChangeOtpVerified(false);
     setPasswordChangeAttempted(false);
+    setIsSendingPasswordOtp(false);
+    setIsVerifyingPasswordOtp(false);
   }, []);
-
 
   useEffect(() => {
     if (employee && isOpen) {
@@ -88,58 +90,105 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
     }
   }, [employee, form, isOpen, resetAllOtpStates]);
 
-
   const handleModalClose = () => {
     setShowPassword(false);
     resetAllOtpStates();
-    onClose(); // This is from props, should call the parent's close logic
+    onClose();
   };
 
-  const handleSendPhoneOtp = () => {
+  const handleSendPhoneOtp = async () => {
     const phoneValue = form.getValues('phone');
     if (!phoneValue || phoneValue.trim() === '') {
       toast({ variant: "destructive", title: "Error", description: "Please enter a phone number first." });
       return;
     }
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedPhoneOtp(otp);
-    toast({ title: "OTP Sent (Simulated)", description: `An OTP has been 'sent' to ${phoneValue}. (OTP for testing: ${otp})` });
-    setShowPhoneOtpDialog(true);
+    setIsSendingPhoneOtp(true);
+    try {
+      // Placeholder for API call
+      // await fetch('/api/send-phone-otp', { method: 'POST', body: JSON.stringify({ phone: phoneValue }) });
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+      toast({ title: "OTP Sent (Simulated)", description: `An OTP has been 'sent' to ${phoneValue}.` });
+      setShowPhoneOtpDialog(true);
+    } catch (error) {
+      toast({ variant: "destructive", title: "Error", description: "Could not send OTP for phone. Please try again." });
+    } finally {
+      setIsSendingPhoneOtp(false);
+    }
   };
 
-  const handleVerifyPhoneOtp = () => {
-    if (phoneOtpInput === generatedPhoneOtp) {
-      setIsPhoneVerifiedState(true);
-      toast({ title: "Success", description: "Phone number verified successfully." });
-      setShowPhoneOtpDialog(false);
-      setPhoneOtpInput('');
-    } else {
+  const handleVerifyPhoneOtp = async () => {
+    const phoneValue = form.getValues('phone');
+     if (!phoneOtpInput) {
+        toast({ variant: "destructive", title: "Error", description: "Please enter the OTP." });
+        return;
+    }
+    setIsVerifyingPhoneOtp(true);
+    try {
+      // Placeholder for API call
+      // const response = await fetch('/api/verify-phone-otp', { method: 'POST', body: JSON.stringify({ phone: phoneValue, otp: phoneOtpInput }) });
+      // if (!response.ok) throw new Error("Invalid OTP");
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+      if (phoneOtpInput.length === 6) { // Simple client-side check for simulation
+        setIsPhoneVerifiedState(true);
+        toast({ title: "Success", description: "Phone number verified successfully." });
+        setShowPhoneOtpDialog(false);
+        setPhoneOtpInput('');
+      } else {
+        throw new Error("Invalid OTP format (Simulated - enter 6 digits).");
+      }
+    } catch (error) {
       toast({ variant: "destructive", title: "Error", description: "Invalid OTP for phone. Please try again." });
+    } finally {
+      setIsVerifyingPhoneOtp(false);
     }
   };
 
-  const generateAlphanumericOtp = (length: number) => {
-    return Math.random().toString(36).substring(2, 2 + length).toUpperCase();
+  const handleSendPasswordChangeOtp = async () => {
+    const phoneValue = form.getValues('phone'); // Assuming OTP sent to employee's verified phone
+    if (!phoneValue || !isPhoneVerifiedState) {
+        toast({ variant: "destructive", title: "Phone Verification Required", description: "A verified phone number is needed to send password change OTP."});
+        return;
+    }
+    setIsSendingPasswordOtp(true);
+    try {
+      // Placeholder for API call
+      // await fetch('/api/send-password-change-otp', { method: 'POST', body: JSON.stringify({ phone: phoneValue }) });
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+      toast({ title: "Password OTP Sent (Simulated)", description: `A password change OTP has been 'sent'.` });
+      setShowPasswordChangeOtpDialog(true);
+    } catch (error) {
+      toast({ variant: "destructive", title: "Error", description: "Could not send password change OTP. Please try again." });
+    } finally {
+      setIsSendingPasswordOtp(false);
+    }
   };
 
-  const handleSendPasswordChangeOtp = () => {
-    const otp = generateAlphanumericOtp(10);
-    setGeneratedPasswordChangeOtp(otp);
-    toast({ title: "Password OTP Sent (Simulated)", description: `A password change OTP has been 'sent'. (OTP for testing: ${otp})` });
-    setShowPasswordChangeOtpDialog(true);
-  };
-
-  const handleVerifyPasswordChangeOtp = () => {
-    if (passwordChangeOtpInput === generatedPasswordChangeOtp) {
-      setIsPasswordChangeOtpVerified(true);
-      toast({ title: "Success", description: "Password change OTP verified. Click 'Save Changes' again to apply." });
-      setShowPasswordChangeOtpDialog(false);
-      setPasswordChangeOtpInput('');
-    } else {
+  const handleVerifyPasswordChangeOtp = async () => {
+    const phoneValue = form.getValues('phone');
+    if (!passwordChangeOtpInput) {
+        toast({ variant: "destructive", title: "Error", description: "Please enter the password change OTP." });
+        return;
+    }
+    setIsVerifyingPasswordOtp(true);
+    try {
+      // Placeholder for API call
+      // const response = await fetch('/api/verify-password-change-otp', { method: 'POST', body: JSON.stringify({ phone: phoneValue, otp: passwordChangeOtpInput }) });
+      // if (!response.ok) throw new Error("Invalid OTP");
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+      if (passwordChangeOtpInput.length === 10) { // Simple client-side check for simulation (10 alphanumeric)
+        setIsPasswordChangeOtpVerified(true);
+        toast({ title: "Success", description: "Password change OTP verified. Click 'Save Changes' again to apply." });
+        setShowPasswordChangeOtpDialog(false);
+        setPasswordChangeOtpInput('');
+      } else {
+        throw new Error("Invalid OTP format (Simulated - enter 10 alphanumeric characters).");
+      }
+    } catch (error) {
       toast({ variant: "destructive", title: "Error", description: "Invalid OTP for password change. Please try again." });
+    } finally {
+      setIsVerifyingPasswordOtp(false);
     }
   };
-
 
   const onSubmit: SubmitHandler<EditEmployeeFormValues> = async (data) => {
     const currentPhone = form.getValues('phone');
@@ -160,7 +209,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
         designation: data.designation,
         email: data.email,
         phone: data.phone,
-        isPhoneVerified: (data.phone && data.phone.trim() !== '') ? isPhoneVerifiedState : false, // Only true if phone exists and verified
+        isPhoneVerified: (data.phone && data.phone.trim() !== '') ? isPhoneVerifiedState : false,
     };
 
     if (data.passwordInput && data.passwordInput.trim() !== '') {
@@ -195,7 +244,6 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
     }
   };
   
-  const watchedPasswordInput = form.watch('passwordInput');
   useEffect(() => {
     if (passwordChangeAttempted) { 
       setIsPasswordChangeOtpVerified(false);
@@ -203,15 +251,13 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
   }, [watchedPasswordInput, passwordChangeAttempted]);
 
   useEffect(() => {
-    // If phone number is changed from its original value, or from empty to a new value, reset verification status
     const currentPhoneValue = form.getValues('phone');
     if (currentPhoneValue !== originalPhone) {
       setIsPhoneVerifiedState(false);
-    } else if (employee) { // If phone is same as original, restore original verification status
+    } else if (employee) {
       setIsPhoneVerifiedState(employee.isPhoneVerified || false);
     }
   }, [watchedPhone, originalPhone, form, employee]);
-
 
   if (!employee) return null;
 
@@ -252,7 +298,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
               <Label htmlFor="edit-passwordInput" className="text-right">New Password</Label>
               <div className="col-span-3 relative">
                 <Input id="edit-passwordInput" type={showPassword ? "text" : "password"} {...form.register('passwordInput')} className="pr-10" placeholder="Leave blank to keep current"/>
-                <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
+                <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
@@ -276,7 +322,14 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
                   <CheckCircle className="h-5 w-5 text-green-500" />
                 ) : (
                   phoneFieldHasValue && (
-                    <Button type="button" size="sm" variant="outline" onClick={handleSendPhoneOtp} disabled={!watchedPhone || (!!watchedPhone && isPhoneVerifiedState)}>
+                    <Button 
+                        type="button" 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={handleSendPhoneOtp} 
+                        disabled={isSendingPhoneOtp || !watchedPhone || (!!watchedPhone && isPhoneVerifiedState)}
+                    >
+                      {isSendingPhoneOtp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                       Verify
                     </Button>
                   )
@@ -300,7 +353,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
           <DialogHeader>
             <DialogTitle>Verify Phone Number</DialogTitle>
             <DialogDescription>
-              An OTP has been 'sent' to {form.getValues('phone')}. Please enter it below.
+              An OTP has been 'sent' to {form.getValues('phone')}. Please enter it below. (For testing, enter a 6-digit number).
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -308,7 +361,10 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => {setShowPhoneOtpDialog(false); setPhoneOtpInput('');}}>Cancel</Button>
-            <Button type="button" onClick={handleVerifyPhoneOtp}>Verify Phone OTP</Button>
+            <Button type="button" onClick={handleVerifyPhoneOtp} disabled={isVerifyingPhoneOtp}>
+                {isVerifyingPhoneOtp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Verify Phone OTP
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -318,7 +374,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
           <DialogHeader>
             <DialogTitle>Verify Password Change</DialogTitle>
             <DialogDescription>
-              To change the password, an OTP has been 'sent'. Please enter it below.
+              To change the password, an OTP has been 'sent'. Please enter it below. (For testing, enter a 10-character alphanumeric string).
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -326,10 +382,15 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => {setShowPasswordChangeOtpDialog(false); setPasswordChangeOtpInput('');}}>Cancel</Button>
-            <Button type="button" onClick={handleVerifyPasswordChangeOtp}>Verify Password Change OTP</Button>
+            <Button type="button" onClick={handleVerifyPasswordChangeOtp} disabled={isVerifyingPasswordOtp}>
+                {isVerifyingPasswordOtp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Verify Password Change OTP
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
   );
 }
+
+    
