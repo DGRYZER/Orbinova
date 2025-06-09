@@ -67,7 +67,8 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
     
     setShowPasswordChangeOtpDialog(false);
     setPasswordChangeOtpInput('');
-    setIsPasswordChangeOtpVerified(false);
+    // Do not reset isPasswordChangeOtpVerified here if we want to persist it until successful save
+    // setIsPasswordChangeOtpVerified(false); 
     setPasswordChangeAttempted(false);
     setIsSendingPasswordOtp(false);
     setIsVerifyingPasswordOtp(false);
@@ -79,7 +80,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
         id: employee.id,
         name: employee.name,
         designation: employee.designation,
-        passwordInput: '',
+        passwordInput: '', // Always clear password input on open
         email: employee.email || '',
         phone: employee.phone || '',
       });
@@ -87,12 +88,14 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
       setOriginalPhone(employee.phone || '');
       setShowPassword(false);
       resetAllOtpStates();
+      setIsPasswordChangeOtpVerified(false); // Specifically reset password OTP verification status on open
     }
   }, [employee, form, isOpen, resetAllOtpStates]);
 
   const handleModalClose = () => {
     setShowPassword(false);
     resetAllOtpStates();
+    setIsPasswordChangeOtpVerified(false); // Ensure reset on close
     onClose();
   };
 
@@ -104,87 +107,85 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
     }
     setIsSendingPhoneOtp(true);
     try {
-      // Placeholder for API call
-      // await fetch('/api/send-phone-otp', { method: 'POST', body: JSON.stringify({ phone: phoneValue }) });
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-      toast({ title: "OTP Sent (Simulated)", description: `An OTP has been 'sent' to ${phoneValue}.` });
+      // SIMULATED API CALL
+      await new Promise(resolve => setTimeout(resolve, 1000)); 
+      toast({ 
+        title: "OTP Sending Simulated", 
+        description: `For phone verification, an OTP has been 'sent' to ${phoneValue}. Please enter any 6-digit code in the next dialog.` 
+      });
       setShowPhoneOtpDialog(true);
     } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: "Could not send OTP for phone. Please try again." });
+      toast({ variant: "destructive", title: "Error", description: "Could not simulate OTP sending for phone. Please try again." });
     } finally {
       setIsSendingPhoneOtp(false);
     }
   };
 
   const handleVerifyPhoneOtp = async () => {
-    const phoneValue = form.getValues('phone');
      if (!phoneOtpInput) {
         toast({ variant: "destructive", title: "Error", description: "Please enter the OTP." });
         return;
     }
     setIsVerifyingPhoneOtp(true);
     try {
-      // Placeholder for API call
-      // const response = await fetch('/api/verify-phone-otp', { method: 'POST', body: JSON.stringify({ phone: phoneValue, otp: phoneOtpInput }) });
-      // if (!response.ok) throw new Error("Invalid OTP");
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-      if (phoneOtpInput.length === 6) { // Simple client-side check for simulation
+      // SIMULATED API CALL & VERIFICATION
+      await new Promise(resolve => setTimeout(resolve, 1000)); 
+      if (phoneOtpInput.length === 6 && /^\d+$/.test(phoneOtpInput)) { 
         setIsPhoneVerifiedState(true);
-        toast({ title: "Success", description: "Phone number verified successfully." });
+        toast({ title: "Success", description: "Phone number verified successfully (Simulated)." });
         setShowPhoneOtpDialog(false);
         setPhoneOtpInput('');
       } else {
-        throw new Error("Invalid OTP format (Simulated - enter 6 digits).");
+        throw new Error("Invalid OTP (Simulated - please enter a 6-digit number for phone verification).");
       }
     } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: "Invalid OTP for phone. Please try again." });
+      toast({ variant: "destructive", title: "Error", description: (error as Error).message || "Invalid OTP for phone. Please try again." });
     } finally {
       setIsVerifyingPhoneOtp(false);
     }
   };
 
   const handleSendPasswordChangeOtp = async () => {
-    const phoneValue = form.getValues('phone'); // Assuming OTP sent to employee's verified phone
+    const phoneValue = form.getValues('phone');
     if (!phoneValue || !isPhoneVerifiedState) {
         toast({ variant: "destructive", title: "Phone Verification Required", description: "A verified phone number is needed to send password change OTP."});
         return;
     }
     setIsSendingPasswordOtp(true);
     try {
-      // Placeholder for API call
-      // await fetch('/api/send-password-change-otp', { method: 'POST', body: JSON.stringify({ phone: phoneValue }) });
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-      toast({ title: "Password OTP Sent (Simulated)", description: `A password change OTP has been 'sent'.` });
+      // SIMULATED API CALL
+      await new Promise(resolve => setTimeout(resolve, 1000)); 
+      toast({ 
+        title: "Password OTP Sending Simulated", 
+        description: `For password change, an OTP has been 'sent'. Please enter any 10-character alphanumeric code in the next dialog.` 
+      });
       setShowPasswordChangeOtpDialog(true);
     } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: "Could not send password change OTP. Please try again." });
+      toast({ variant: "destructive", title: "Error", description: "Could not simulate password change OTP sending. Please try again." });
     } finally {
       setIsSendingPasswordOtp(false);
     }
   };
 
   const handleVerifyPasswordChangeOtp = async () => {
-    const phoneValue = form.getValues('phone');
     if (!passwordChangeOtpInput) {
         toast({ variant: "destructive", title: "Error", description: "Please enter the password change OTP." });
         return;
     }
     setIsVerifyingPasswordOtp(true);
     try {
-      // Placeholder for API call
-      // const response = await fetch('/api/verify-password-change-otp', { method: 'POST', body: JSON.stringify({ phone: phoneValue, otp: passwordChangeOtpInput }) });
-      // if (!response.ok) throw new Error("Invalid OTP");
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-      if (passwordChangeOtpInput.length === 10) { // Simple client-side check for simulation (10 alphanumeric)
+      // SIMULATED API CALL & VERIFICATION
+      await new Promise(resolve => setTimeout(resolve, 1000)); 
+      if (passwordChangeOtpInput.length === 10 && /^[a-zA-Z0-9]+$/.test(passwordChangeOtpInput)) { 
         setIsPasswordChangeOtpVerified(true);
-        toast({ title: "Success", description: "Password change OTP verified. Click 'Save Changes' again to apply." });
+        toast({ title: "Success", description: "Password change OTP verified (Simulated). Click 'Save Changes' again to apply the new password." });
         setShowPasswordChangeOtpDialog(false);
         setPasswordChangeOtpInput('');
       } else {
-        throw new Error("Invalid OTP format (Simulated - enter 10 alphanumeric characters).");
+        throw new Error("Invalid OTP (Simulated - please enter a 10-character alphanumeric string for password change).");
       }
     } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: "Invalid OTP for password change. Please try again." });
+      toast({ variant: "destructive", title: "Error", description: (error as Error).message || "Invalid OTP for password change. Please try again." });
     } finally {
       setIsVerifyingPasswordOtp(false);
     }
@@ -195,7 +196,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
     if (currentPhone && currentPhone.trim() !== '' && !isPhoneVerifiedState) {
       toast({
         variant: "destructive",
-        title: "Verification Required",
+        title: "Phone Verification Required",
         description: "Please verify the phone number before saving changes.",
       });
       return;
@@ -215,46 +216,57 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
     if (data.passwordInput && data.passwordInput.trim() !== '') {
       setPasswordChangeAttempted(true); 
       if (!employeeUpdatePayload.phone || !employeeUpdatePayload.isPhoneVerified) {
-        toast({ variant: "destructive", title: "Verification Required", description: "A verified phone number is required to change the password." });
+        toast({ variant: "destructive", title: "Phone Verification Required", description: "A verified phone number is required to change the password." });
         setIsSubmitting(false);
         return;
       }
       if (!isPasswordChangeOtpVerified) {
-        toast({ title: "OTP Required for Password", description: "Please verify OTP to change password." });
-        handleSendPasswordChangeOtp(); 
+        toast({ title: "OTP Required for Password Change", description: "Please verify the password change OTP. Click 'Send OTP for Password' if you haven't." });
+        // Optionally auto-trigger sending OTP if not already attempted or if it's logical here.
+        // For now, we rely on user to click the (soon to be added) explicit button or for it to be triggered.
+        // Let's ensure there's a clear path for the user. If they submit with a new password but no OTP verification, prompt them.
+        handleSendPasswordChangeOtp(); // Prompt them to start the OTP flow.
         setIsSubmitting(false);
         return;
       }
+      // If OTP is verified, include the password.
       employeeUpdatePayload.password = data.passwordInput;
     } else {
       setPasswordChangeAttempted(false); 
     }
     
-    const result = updateEmployee(employeeUpdatePayload as Employee);
+    const result = updateEmployee(employeeUpdatePayload as Employee); // Type assertion
     if (result.success) {
       toast({ title: "Success", description: "Employee details updated." });
       onEmployeeUpdated();
-      handleModalClose();
+      handleModalClose(); // This will also call resetAllOtpStates and setIsPasswordChangeOtpVerified(false)
     } else {
       toast({ variant: "destructive", title: "Error", description: result.message || "Failed to update employee." });
     }
     setIsSubmitting(false);
-    if (data.passwordInput && data.passwordInput.trim() !== '') {
-        setIsPasswordChangeOtpVerified(false); 
-    }
+    // Reset password OTP verification status *after* successful save or if password wasn't changed.
+    // If the save was successful and included a password, it's fine to reset.
+    // If there was no password input, it's also fine.
+    // This is now handled in handleModalClose or when the modal re-opens.
+    // setIsPasswordChangeOtpVerified(false); 
   };
   
   useEffect(() => {
-    if (passwordChangeAttempted) { 
-      setIsPasswordChangeOtpVerified(false);
+    // If user clears password input after attempting a change, reset OTP verification for password
+    if (passwordChangeAttempted && (!watchedPasswordInput || watchedPasswordInput.trim() === '')) {
+        setIsPasswordChangeOtpVerified(false);
+        setPasswordChangeAttempted(false); // Reset attempt flag
     }
   }, [watchedPasswordInput, passwordChangeAttempted]);
 
   useEffect(() => {
     const currentPhoneValue = form.getValues('phone');
     if (currentPhoneValue !== originalPhone) {
-      setIsPhoneVerifiedState(false);
+      setIsPhoneVerifiedState(false); // Phone changed, needs re-verification
+      // Also reset password OTP if phone changes, as it's tied to phone
+      setIsPasswordChangeOtpVerified(false); 
     } else if (employee) {
+      // Restore original verification status if phone is reverted to original
       setIsPhoneVerifiedState(employee.isPhoneVerified || false);
     }
   }, [watchedPhone, originalPhone, form, employee]);
@@ -262,7 +274,11 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
   if (!employee) return null;
 
   const phoneFieldHasValue = watchedPhone && watchedPhone.trim() !== '';
-  const canSubmit = !(phoneFieldHasValue && !isPhoneVerifiedState);
+  // Disable submit if phone is entered but not verified OR if password change is attempted but OTP not verified
+  const canSubmit = 
+    !(phoneFieldHasValue && !isPhoneVerifiedState) &&
+    !((watchedPasswordInput && watchedPasswordInput.trim() !== '') && !isPasswordChangeOtpVerified && passwordChangeAttempted);
+
 
   return (
     <>
@@ -298,12 +314,38 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
               <Label htmlFor="edit-passwordInput" className="text-right">New Password</Label>
               <div className="col-span-3 relative">
                 <Input id="edit-passwordInput" type={showPassword ? "text" : "password"} {...form.register('passwordInput')} className="pr-10" placeholder="Leave blank to keep current"/>
-                <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
+                <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
               {form.formState.errors.passwordInput && <p className="col-span-3 col-start-2 text-sm text-destructive">{form.formState.errors.passwordInput.message}</p>}
             </div>
+             {watchedPasswordInput && watchedPasswordInput.trim() !== '' && (
+                <div className="grid grid-cols-4 items-center gap-4">
+                    <div className="col-start-2 col-span-3 flex items-center gap-2">
+                        {isPasswordChangeOtpVerified ? (
+                             <div className="flex items-center text-green-600 text-sm">
+                                <CheckCircle className="h-4 w-4 mr-1" /> Password OTP Verified
+                            </div>
+                        ) : (
+                            <Button 
+                                type="button" 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={() => {
+                                    setPasswordChangeAttempted(true); // Mark that user is trying to change password
+                                    handleSendPasswordChangeOtp();
+                                }}
+                                disabled={isSendingPasswordOtp || !isPhoneVerifiedState || !watchedPhone}
+                            >
+                                {isSendingPasswordOtp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                Send OTP for Password
+                            </Button>
+                        )}
+                    </div>
+                     {!isPhoneVerifiedState && <p className="col-span-3 col-start-2 text-xs text-muted-foreground">A verified phone is required to change password.</p>}
+                </div>
+            )}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="edit-email" className="text-right">Email</Label>
               <Input id="edit-email" type="email" {...form.register('email')} className="col-span-3" />
@@ -319,7 +361,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
                   disabled={isPhoneVerifiedState && phoneFieldHasValue} 
                 />
                 {phoneFieldHasValue && isPhoneVerifiedState ? (
-                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  <CheckCircle className="h-5 w-5 text-green-500" title="Phone Verified"/>
                 ) : (
                   phoneFieldHasValue && (
                     <Button 
@@ -330,7 +372,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
                         disabled={isSendingPhoneOtp || !watchedPhone || (!!watchedPhone && isPhoneVerifiedState)}
                     >
                       {isSendingPhoneOtp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Verify
+                      Verify Phone
                     </Button>
                   )
                 )}
@@ -348,12 +390,13 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
         </DialogContent>
       </Dialog>
 
+      {/* Phone OTP Dialog */}
       <Dialog open={showPhoneOtpDialog} onOpenChange={(open) => { if(!open) {setShowPhoneOtpDialog(false); setPhoneOtpInput('');} else setShowPhoneOtpDialog(true);}}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Verify Phone Number</DialogTitle>
+            <DialogTitle>Verify Phone Number (Simulated)</DialogTitle>
             <DialogDescription>
-              An OTP has been 'sent' to {form.getValues('phone')}. Please enter it below. (For testing, enter a 6-digit number).
+              OTP sending is simulated. For testing, please enter a 6-digit number below.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -369,12 +412,13 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
         </DialogContent>
       </Dialog>
 
+      {/* Password Change OTP Dialog */}
       <Dialog open={showPasswordChangeOtpDialog} onOpenChange={(open) => { if(!open) {setShowPasswordChangeOtpDialog(false); setPasswordChangeOtpInput('');} else setShowPasswordChangeOtpDialog(true);}}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Verify Password Change</DialogTitle>
+            <DialogTitle>Verify Password Change (Simulated)</DialogTitle>
             <DialogDescription>
-              To change the password, an OTP has been 'sent'. Please enter it below. (For testing, enter a 10-character alphanumeric string).
+              OTP sending is simulated. For testing, please enter a 10-character alphanumeric string below.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -384,7 +428,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
             <Button type="button" variant="outline" onClick={() => {setShowPasswordChangeOtpDialog(false); setPasswordChangeOtpInput('');}}>Cancel</Button>
             <Button type="button" onClick={handleVerifyPasswordChangeOtp} disabled={isVerifyingPasswordOtp}>
                 {isVerifyingPasswordOtp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Verify Password Change OTP
+                Verify Password OTP
             </Button>
           </DialogFooter>
         </DialogContent>

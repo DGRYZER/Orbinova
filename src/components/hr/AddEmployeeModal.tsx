@@ -40,8 +40,6 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
   const [showPhoneOtpDialog, setShowPhoneOtpDialog] = useState(false);
   const [phoneOtpInput, setPhoneOtpInput] = useState('');
-  // OTP generation and actual sending would be handled by the backend.
-  // const [generatedPhoneOtp, setGeneratedPhoneOtp] = useState(''); 
 
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
@@ -60,7 +58,6 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
   const resetOtpStates = () => {
     setShowPhoneOtpDialog(false);
     setPhoneOtpInput('');
-    // setGeneratedPhoneOtp('');
     setIsSendingOtp(false);
     setIsVerifyingOtp(false);
   };
@@ -83,52 +80,41 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
     }
     setIsSendingOtp(true);
     try {
-      // Placeholder for API call to send OTP
-      // const response = await fetch('/api/send-phone-otp', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ phone: phoneValue }),
-      // });
-      // if (!response.ok) throw new Error('Failed to send OTP');
-      // For simulation, we just proceed to show OTP dialog
+      // SIMULATED API CALL - In a real app, this would call a backend API to send an SMS.
+      // await fetch('/api/send-phone-otp', { method: 'POST', body: JSON.stringify({ phone: phoneValue }) });
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
 
-      toast({ title: "OTP Sent (Simulated)", description: `An OTP has been 'sent' to ${phoneValue}.` });
+      toast({ 
+        title: "OTP Sending Simulated", 
+        description: `For testing, an OTP has been 'sent' to ${phoneValue}. Please enter any 6-digit code in the next dialog.` 
+      });
       setShowPhoneOtpDialog(true);
     } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: (error as Error).message || "Could not send OTP. Please try again." });
+      // This catch block would handle errors from a real API call
+      toast({ variant: "destructive", title: "Error", description: (error as Error).message || "Could not simulate OTP sending. Please try again." });
     } finally {
       setIsSendingOtp(false);
     }
   };
 
   const handleVerifyPhoneOtp = async () => {
-    const phoneValue = form.getValues('phone');
     if (!phoneOtpInput) {
         toast({ variant: "destructive", title: "Error", description: "Please enter the OTP." });
         return;
     }
     setIsVerifyingOtp(true);
     try {
-      // Placeholder for API call to verify OTP
-      // const response = await fetch('/api/verify-phone-otp', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ phone: phoneValue, otp: phoneOtpInput }),
-      // });
-      // if (!response.ok) throw new Error('Invalid OTP');
-      // const data = await response.json();
-      // if (!data.success) throw new Error('Invalid OTP');
+      // SIMULATED API CALL & VERIFICATION - In a real app, this would call a backend API.
+      // await fetch('/api/verify-phone-otp', { method: 'POST', body: JSON.stringify({ phone: form.getValues('phone'), otp: phoneOtpInput }) });
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-      // For simulation, we'll assume any 6-digit OTP is correct for now if you need to test success.
-      // In a real app, this would be checked by the backend.
-      if (phoneOtpInput.length === 6) { // Simple client-side check for simulation
+      
+      if (phoneOtpInput.length === 6 && /^\d+$/.test(phoneOtpInput)) { // Simple client-side check for simulation
           setIsPhoneVerified(true);
-          toast({ title: "Success", description: "Phone number verified successfully." });
+          toast({ title: "Success", description: "Phone number verified successfully (Simulated)." });
           setShowPhoneOtpDialog(false);
           setPhoneOtpInput('');
       } else {
-          throw new Error("Invalid OTP format (Simulated - enter 6 digits).");
+          throw new Error("Invalid OTP (Simulated - please enter a 6-digit number).");
       }
 
     } catch (error) {
@@ -161,6 +147,7 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
   };
   
   useEffect(() => {
+    // Reset phone verification if phone number changes
     setIsPhoneVerified(false);
   }, [watchedPhone]);
 
@@ -220,7 +207,7 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex={-1}
                 >
@@ -244,7 +231,7 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
                     disabled={isPhoneVerified && !!watchedPhone && watchedPhone.trim() !== ''} 
                 />
                 {isPhoneVerified && watchedPhone && watchedPhone.trim() !== '' ? (
-                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  <CheckCircle className="h-5 w-5 text-green-500" title="Phone Verified"/>
                 ) : (
                   watchedPhone && watchedPhone.trim() !== '' && (
                     <Button 
@@ -252,7 +239,7 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
                         size="sm" 
                         variant="outline" 
                         onClick={handleSendPhoneOtp} 
-                        disabled={isSendingOtp || (!form.watch('phone') || (!!form.watch('phone') && isPhoneVerified))}
+                        disabled={isSendingOtp || (!!form.watch('phone') && isPhoneVerified)}
                     >
                       {isSendingOtp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                       Verify
@@ -279,10 +266,9 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
       <Dialog open={showPhoneOtpDialog} onOpenChange={(open) => { if(!open) resetOtpStates(); else setShowPhoneOtpDialog(true);}}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Verify Phone Number</DialogTitle>
+            <DialogTitle>Verify Phone Number (Simulated)</DialogTitle>
             <DialogDescription>
-              An OTP has been 'sent' to {form.getValues('phone')}. Please enter it below.
-              (For testing, enter a 6-digit number).
+              OTP sending is simulated. To proceed with testing, please enter a 6-digit number below.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -306,5 +292,4 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
     </>
   );
 }
-
     
