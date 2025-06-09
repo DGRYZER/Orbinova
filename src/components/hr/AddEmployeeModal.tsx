@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { addEmployee } from '@/lib/employeeService';
 import { useToast } from '@/hooks/use-toast';
-import { PlusCircle, Loader2, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { PlusCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 
 const employeeSchema = z.object({
   id: z.string().min(1, "Employee ID is required"),
@@ -32,16 +32,8 @@ interface AddEmployeeModalProps {
 export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSendingOtp, setIsSendingOtp] = useState(false);
-  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
-
-  const [isPhoneVerified, setIsPhoneVerified] = useState(false); // This flag is now set via email OTP
-  const [showContactOtpDialog, setShowContactOtpDialog] = useState(false);
-  const [contactOtpInput, setContactOtpInput] = useState('');
-  const [emailForOtp, setEmailForOtp] = useState('');
-
 
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
@@ -54,91 +46,26 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
       phone: '',
     },
   });
-
-  const watchedPhone = form.watch('phone');
-  const watchedEmail = form.watch('email');
-
-
-  const resetOtpStates = () => {
-    setShowContactOtpDialog(false);
-    setContactOtpInput('');
-    setIsSendingOtp(false);
-    setIsVerifyingOtp(false);
-    setEmailForOtp('');
-  };
   
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     if (!open) {
       form.reset();
       setShowPassword(false);
-      setIsPhoneVerified(false); 
-      resetOtpStates();
-    }
-  };
-
-  const handleSendContactOtp = async () => {
-    const emailValue = form.getValues('email');
-    if (!emailValue || emailValue.trim() === '') {
-      toast({ variant: "destructive", title: "Email Required", description: "Please enter an email address first to receive the verification OTP." });
-      return;
-    }
-    setEmailForOtp(emailValue);
-    setIsSendingOtp(true);
-    try {
-      // SIMULATED API CALL - In a real app, this would call a backend API to send an email.
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-
-      toast({ 
-        title: "OTP Sending Simulated", 
-        description: `For testing, an OTP has been 'sent' to ${emailValue}. Please enter any 6-digit code in the next dialog.` 
-      });
-      setShowContactOtpDialog(true);
-    } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: (error as Error).message || "Could not simulate OTP sending. Please try again." });
-    } finally {
-      setIsSendingOtp(false);
-    }
-  };
-
-  const handleVerifyContactOtp = async () => {
-    if (!contactOtpInput) {
-        toast({ variant: "destructive", title: "Error", description: "Please enter the OTP." });
-        return;
-    }
-    setIsVerifyingOtp(true);
-    try {
-      // SIMULATED API CALL & VERIFICATION 
-      await new Promise(resolve => setTimeout(resolve, 1000)); 
-      
-      if (contactOtpInput.length === 6 && /^\d+$/.test(contactOtpInput)) { 
-          setIsPhoneVerified(true); // Flag indicates contact method verified
-          toast({ title: "Success", description: "Contact method verified successfully (Simulated)." });
-          setShowContactOtpDialog(false);
-          setContactOtpInput('');
-      } else {
-          throw new Error("Invalid OTP (Simulated - please enter a 6-digit number).");
-      }
-
-    } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: (error as Error).message || "Invalid OTP. Please try again." });
-    } finally {
-        setIsVerifyingOtp(false);
     }
   };
 
   const onSubmit: SubmitHandler<EmployeeFormValues> = async (data) => {
-    if (data.phone && data.phone.trim() !== '' && !isPhoneVerified) {
-      toast({
-        variant: "destructive",
-        title: "Verification Required",
-        description: "Please verify the contact method (via email OTP) before adding the employee if a phone number is provided.",
-      });
-      return;
-    }
-
     setIsSubmitting(true);
-    const result = addEmployee({ ...data, isPhoneVerified });
+    // Pass only necessary data, isPhoneVerified is removed
+    const result = addEmployee({ 
+        id: data.id,
+        name: data.name,
+        designation: data.designation,
+        passwordInput: data.passwordInput,
+        email: data.email,
+        phone: data.phone
+    });
     if (result.success) {
       toast({ title: "Success", description: "Employee added successfully." });
       onEmployeeAdded();
@@ -149,13 +76,6 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
     setIsSubmitting(false);
   };
   
-  useEffect(() => {
-    // Reset contact verification if phone number or email changes
-    setIsPhoneVerified(false);
-  }, [watchedPhone, watchedEmail]);
-
-  const canSubmit = !(watchedPhone && watchedPhone.trim() !== '' && !isPhoneVerified);
-
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -231,36 +151,17 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
                     id="phone" 
                     {...form.register('phone')} 
                     className="flex-grow" 
-                    disabled={isPhoneVerified && !!watchedPhone && watchedPhone.trim() !== ''} 
                 />
-                {isPhoneVerified && watchedPhone && watchedPhone.trim() !== '' ? (
-                  <CheckCircle className="h-5 w-5 text-green-500" title="Contact Verified"/>
-                ) : (
-                  watchedPhone && watchedPhone.trim() !== '' && (
-                    <Button 
-                        type="button" 
-                        size="sm" 
-                        variant="outline" 
-                        onClick={handleSendContactOtp} 
-                        disabled={isSendingOtp || !watchedEmail || (!!form.watch('phone') && isPhoneVerified)}
-                    >
-                      {isSendingOtp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Verify Phone
-                    </Button>
-                  )
-                )}
+                {/* Verification UI removed */}
               </div>
                {form.formState.errors.phone && <p className="col-span-3 col-start-2 text-sm text-destructive">{form.formState.errors.phone.message}</p>}
-               {watchedPhone && watchedPhone.trim() !== '' && !watchedEmail && !isPhoneVerified &&
-                 <p className="col-span-3 col-start-2 text-xs text-muted-foreground">An email address is required to verify this phone number via OTP.</p>
-               }
             </div>
 
             <DialogFooter>
               <DialogClose asChild>
                 <Button type="button" variant="outline">Cancel</Button>
               </DialogClose>
-              <Button type="submit" disabled={isSubmitting || !canSubmit}>
+              <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Add Employee
               </Button>
@@ -268,34 +169,7 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
           </form>
         </DialogContent>
       </Dialog>
-
-      <Dialog open={showContactOtpDialog} onOpenChange={(open) => { if(!open) resetOtpStates(); else setShowContactOtpDialog(true);}}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Verify Contact (Simulated Email OTP)</DialogTitle>
-            <DialogDescription>
-              OTP 'sent' to {emailForOtp}. For testing, please enter a 6-digit number below.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <Input
-              id="contactOtp"
-              placeholder="Enter 6-digit OTP"
-              value={contactOtpInput}
-              onChange={(e) => setContactOtpInput(e.target.value)}
-              maxLength={6}
-            />
-          </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => {setShowContactOtpDialog(false); resetOtpStates();}}>Cancel</Button>
-            <Button type="button" onClick={handleVerifyContactOtp} disabled={isVerifyingOtp}>
-                {isVerifyingOtp && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Verify OTP
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Contact OTP Dialog removed */}
     </>
   );
 }
-    

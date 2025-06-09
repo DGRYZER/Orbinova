@@ -13,7 +13,7 @@ export function getEmployeeById(id: string): Employee | undefined {
   return employees.find(emp => emp.id === id);
 }
 
-export function addEmployee(newEmployeeData: Omit<Employee, 'password' | 'id'> & { id: string; passwordInput: string; isPhoneVerified?: boolean }): { success: boolean, message?: string } {
+export function addEmployee(newEmployeeData: Omit<Employee, 'password' | 'id'> & { id: string; passwordInput: string }): { success: boolean, message?: string } {
   const employees = getAllEmployees();
   if (employees.some(emp => emp.id === newEmployeeData.id)) {
     return { success: false, message: 'Employee ID already exists.' };
@@ -26,7 +26,6 @@ export function addEmployee(newEmployeeData: Omit<Employee, 'password' | 'id'> &
     password: newEmployeeData.passwordInput,
     email: newEmployeeData.email,
     phone: newEmployeeData.phone,
-    isPhoneVerified: newEmployeeData.isPhoneVerified || false, // Default to false
   };
 
   setItem<Employee[]>(EMPLOYEES_KEY, [...employees, employeeToAdd]);

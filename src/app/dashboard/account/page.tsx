@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { UserCircle, Mail, Phone, Edit3, CheckCircle, ShieldAlert } from "lucide-react"; // Added icons
+import { UserCircle, Mail, Phone, Edit3 } from "lucide-react"; // Removed CheckCircle, ShieldAlert
 
 export default function AccountPage() {
   const { currentUser } = useAuth();
@@ -57,11 +57,7 @@ export default function AccountPage() {
             <Label htmlFor="phone">Phone</Label>
             <div className="flex items-center gap-2">
               <Input id="phone" value={currentUser.phone || "Not set"} readOnly disabled className="flex-grow" />
-              {currentUser.isPhoneVerified ? (
-                <CheckCircle className="h-5 w-5 text-green-500" title="Phone Verified" />
-              ) : (
-                currentUser.phone && <ShieldAlert className="h-5 w-5 text-yellow-500" title="Phone Not Verified" />
-              )}
+              {/* Phone verification icons removed */}
             </div>
           </div>
           

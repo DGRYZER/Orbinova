@@ -16,7 +16,7 @@ export function initializeDefaultAdmin(): void {
         designation: 'HR',
         password: 'hrpassword', // Default password for HR
         email: 'hr@example.com',
-        isPhoneVerified: false, // Default for new admin
+        // isPhoneVerified is removed
       };
       setItem<Employee[]>(EMPLOYEES_KEY, [defaultAdmin]);
     }
@@ -38,7 +38,7 @@ export function login(employeeId: string, passwordAttempt: string, designationAt
       designation: employee.designation,
       email: employee.email,
       phone: employee.phone,
-      isPhoneVerified: employee.isPhoneVerified || false,
+      // isPhoneVerified is removed
     };
     setItem<User>(CURRENT_USER_KEY, currentUser);
     return currentUser;
