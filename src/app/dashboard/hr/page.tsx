@@ -33,7 +33,7 @@ export default function HrDashboardPage() {
       </div>
 
       <Tabs defaultValue="employee-management" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:w-[400px]">
+        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 md:w-[450px]">
           <TabsTrigger value="employee-management">
             <Users className="mr-2 h-4 w-4" /> Employee Management
           </TabsTrigger>

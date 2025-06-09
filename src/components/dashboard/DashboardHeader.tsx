@@ -10,7 +10,7 @@ export default function DashboardHeader() {
       <div className="container flex h-16 items-center justify-between max-w-screen-2xl">
         <Link href="/dashboard" className="flex items-center space-x-2">
           <Building2 className="h-7 w-7 text-primary" />
-          <span className="font-headline text-xl font-semibold text-primary">AttendEase</span>
+          <span className="font-headline text-lg sm:text-xl font-semibold text-primary">AttendEase</span>
         </Link>
         
         <div className="flex items-center space-x-4">
