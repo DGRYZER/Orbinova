@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { addEmployee } from '@/lib/employeeService';
 import { useToast } from '@/hooks/use-toast';
-import { PlusCircle, Loader2, Eye, EyeOff, CheckCircle, ShieldCheck } from 'lucide-react';
+import { PlusCircle, Loader2, Eye, EyeOff, CheckCircle } from 'lucide-react';
 
 const employeeSchema = z.object({
   id: z.string().min(1, "Employee ID is required"),
@@ -21,7 +21,6 @@ const employeeSchema = z.object({
   passwordInput: z.string().min(6, "Password must be at least 6 characters"),
   email: z.string().email("Invalid email address").optional().or(z.literal('')),
   phone: z.string().optional().or(z.literal('')),
-  // isPhoneVerified is managed by state, not direct form input for zod validation here
 });
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
@@ -53,11 +52,12 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
     },
   });
 
+  const watchedPhone = form.watch('phone');
+
   const resetOtpStates = () => {
     setShowPhoneOtpDialog(false);
     setPhoneOtpInput('');
     setGeneratedPhoneOtp('');
-    // setIsPhoneVerified(false); // Don't reset verification status on simple close, only on form reset
   };
   
   const handleOpenChange = (open: boolean) => {
@@ -65,7 +65,7 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
     if (!open) {
       form.reset();
       setShowPassword(false);
-      setIsPhoneVerified(false); // Reset verification status when main dialog closes
+      setIsPhoneVerified(false); 
       resetOtpStates();
     }
   };
@@ -76,10 +76,9 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
       toast({ variant: "destructive", title: "Error", description: "Please enter a phone number first." });
       return;
     }
-    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString(); 
     setGeneratedPhoneOtp(otp);
-    // console.log(`Phone Verification OTP for ${phoneValue}: ${otp}`); // Simulate sending OTP - Removed for security
-    toast({ title: "OTP Sent (Simulated)", description: `An OTP has been sent to ${phoneValue}. Please check your device.` });
+    toast({ title: "OTP Sent (Simulated)", description: `An OTP has been 'sent' to ${phoneValue}. (OTP for testing: ${otp})` });
     setShowPhoneOtpDialog(true);
   };
 
@@ -95,17 +94,33 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
   };
 
   const onSubmit: SubmitHandler<EmployeeFormValues> = async (data) => {
+    if (data.phone && data.phone.trim() !== '' && !isPhoneVerified) {
+      toast({
+        variant: "destructive",
+        title: "Verification Required",
+        description: "Please verify the phone number before adding the employee.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     const result = addEmployee({ ...data, isPhoneVerified });
     if (result.success) {
       toast({ title: "Success", description: "Employee added successfully." });
       onEmployeeAdded();
-      setIsOpen(false); // This will trigger handleOpenChange which resets form and states
+      setIsOpen(false); 
     } else {
       toast({ variant: "destructive", title: "Error", description: result.message || "Failed to add employee." });
     }
     setIsSubmitting(false);
   };
+  
+  // Effect to reset phone verification if phone number changes
+  useEffect(() => {
+    setIsPhoneVerified(false);
+  }, [watchedPhone]);
+
+  const canSubmit = !(watchedPhone && watchedPhone.trim() !== '' && !isPhoneVerified);
 
   return (
     <>
@@ -123,7 +138,6 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
-            {/* Employee ID, Name, Designation */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="id" className="text-right">Employee ID</Label>
               <Input id="id" {...form.register('id')} className="col-span-3" />
@@ -149,7 +163,6 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
                 </SelectContent>
               </Select>
             </div>
-            {/* Password */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="passwordInput" className="text-right">Password</Label>
               <div className="col-span-3 relative">
@@ -163,7 +176,7 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex={-1}
                 >
@@ -172,23 +185,23 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
               </div>
               {form.formState.errors.passwordInput && <p className="col-span-3 col-start-2 text-sm text-destructive">{form.formState.errors.passwordInput.message}</p>}
             </div>
-            {/* Email */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="email" className="text-right">Email</Label>
               <Input id="email" type="email" {...form.register('email')} className="col-span-3" />
               {form.formState.errors.email && <p className="col-span-3 col-start-2 text-sm text-destructive">{form.formState.errors.email.message}</p>}
             </div>
-            {/* Phone Number with Verification */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="phone" className="text-right">Phone</Label>
               <div className="col-span-3 flex items-center gap-2">
-                <Input id="phone" {...form.register('phone')} className="flex-grow" disabled={isPhoneVerified} />
-                {isPhoneVerified ? (
+                <Input id="phone" {...form.register('phone')} className="flex-grow" disabled={isPhoneVerified && !!watchedPhone && watchedPhone.trim() !== ''} />
+                {isPhoneVerified && watchedPhone && watchedPhone.trim() !== '' ? (
                   <CheckCircle className="h-5 w-5 text-green-500" />
                 ) : (
-                  <Button type="button" size="sm" variant="outline" onClick={handleSendPhoneOtp} disabled={!form.watch('phone')}>
-                    Verify
-                  </Button>
+                  watchedPhone && watchedPhone.trim() !== '' && (
+                    <Button type="button" size="sm" variant="outline" onClick={handleSendPhoneOtp} disabled={!form.watch('phone') || (!!form.watch('phone') && isPhoneVerified) }>
+                      Verify
+                    </Button>
+                  )
                 )}
               </div>
                {form.formState.errors.phone && <p className="col-span-3 col-start-2 text-sm text-destructive">{form.formState.errors.phone.message}</p>}
@@ -198,7 +211,7 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
               <DialogClose asChild>
                 <Button type="button" variant="outline">Cancel</Button>
               </DialogClose>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting || !canSubmit}>
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Add Employee
               </Button>
@@ -207,13 +220,12 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
         </DialogContent>
       </Dialog>
 
-      {/* Phone OTP Verification Dialog */}
       <Dialog open={showPhoneOtpDialog} onOpenChange={(open) => { if(!open) resetOtpStates(); else setShowPhoneOtpDialog(true);}}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Verify Phone Number</DialogTitle>
             <DialogDescription>
-              An OTP has been sent to {form.getValues('phone')}. Please enter it below.
+              An OTP has been 'sent' to {form.getValues('phone')}. Please enter it below.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">

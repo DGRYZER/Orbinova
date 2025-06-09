@@ -8,15 +8,15 @@ import * as z from 'zod';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"; // Removed DialogClose here
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { updateEmployee } from '@/lib/employeeService';
 import type { Employee } from '@/types';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Eye, EyeOff, CheckCircle, ShieldCheck } from 'lucide-react';
+import { Loader2, Eye, EyeOff, CheckCircle } from 'lucide-react';
 
 const editEmployeeSchema = z.object({
-  id: z.string(), // Readonly
+  id: z.string(), 
   name: z.string().min(1, "Name is required"),
   designation: z.enum(['Employee', 'HR']),
   passwordInput: z.string().min(6, "New password must be at least 6 characters").optional().or(z.literal('')),
@@ -38,13 +38,13 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
 
-  // Phone Verification State
   const [isPhoneVerifiedState, setIsPhoneVerifiedState] = useState(employee?.isPhoneVerified || false);
   const [showPhoneOtpDialog, setShowPhoneOtpDialog] = useState(false);
   const [phoneOtpInput, setPhoneOtpInput] = useState('');
   const [generatedPhoneOtp, setGeneratedPhoneOtp] = useState('');
+  const [originalPhone, setOriginalPhone] = useState(employee?.phone || '');
 
-  // Password Change OTP State
+
   const [showPasswordChangeOtpDialog, setShowPasswordChangeOtpDialog] = useState(false);
   const [passwordChangeOtpInput, setPasswordChangeOtpInput] = useState('');
   const [generatedPasswordChangeOtp, setGeneratedPasswordChangeOtp] = useState('');
@@ -56,6 +56,8 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
     resolver: zodResolver(editEmployeeSchema),
   });
   
+  const watchedPhone = form.watch('phone');
+
   const resetAllOtpStates = useCallback(() => {
     setShowPhoneOtpDialog(false);
     setPhoneOtpInput('');
@@ -80,6 +82,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
         phone: employee.phone || '',
       });
       setIsPhoneVerifiedState(employee.isPhoneVerified || false);
+      setOriginalPhone(employee.phone || '');
       setShowPassword(false);
       resetAllOtpStates();
     }
@@ -89,10 +92,9 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
   const handleModalClose = () => {
     setShowPassword(false);
     resetAllOtpStates();
-    onClose();
+    onClose(); // This is from props, should call the parent's close logic
   };
 
-  // --- Phone Verification Logic ---
   const handleSendPhoneOtp = () => {
     const phoneValue = form.getValues('phone');
     if (!phoneValue || phoneValue.trim() === '') {
@@ -101,8 +103,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
     }
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     setGeneratedPhoneOtp(otp);
-    // console.log(`Phone Verification OTP for ${phoneValue}: ${otp}`); // Removed for security
-    toast({ title: "OTP Sent (Simulated)", description: `An OTP has been sent to ${phoneValue}. Please check your device.` });
+    toast({ title: "OTP Sent (Simulated)", description: `An OTP has been 'sent' to ${phoneValue}. (OTP for testing: ${otp})` });
     setShowPhoneOtpDialog(true);
   };
 
@@ -117,7 +118,6 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
     }
   };
 
-  // --- Password Change OTP Logic ---
   const generateAlphanumericOtp = (length: number) => {
     return Math.random().toString(36).substring(2, 2 + length).toUpperCase();
   };
@@ -125,8 +125,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
   const handleSendPasswordChangeOtp = () => {
     const otp = generateAlphanumericOtp(10);
     setGeneratedPasswordChangeOtp(otp);
-    // console.log(`Password Change OTP for ${employee?.name}: ${otp}`); // Removed for security
-    toast({ title: "Password OTP Sent (Simulated)", description: `A password change OTP has been sent to the verified phone number. Please check your device.` });
+    toast({ title: "Password OTP Sent (Simulated)", description: `A password change OTP has been 'sent'. (OTP for testing: ${otp})` });
     setShowPasswordChangeOtpDialog(true);
   };
 
@@ -143,6 +142,16 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
 
 
   const onSubmit: SubmitHandler<EditEmployeeFormValues> = async (data) => {
+    const currentPhone = form.getValues('phone');
+    if (currentPhone && currentPhone.trim() !== '' && !isPhoneVerifiedState) {
+      toast({
+        variant: "destructive",
+        title: "Verification Required",
+        description: "Please verify the phone number before saving changes.",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     
     const employeeUpdatePayload: Partial<Employee> & { id: string } = {
@@ -151,26 +160,25 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
         designation: data.designation,
         email: data.email,
         phone: data.phone,
-        isPhoneVerified: isPhoneVerifiedState,
+        isPhoneVerified: (data.phone && data.phone.trim() !== '') ? isPhoneVerifiedState : false, // Only true if phone exists and verified
     };
 
     if (data.passwordInput && data.passwordInput.trim() !== '') {
-      setPasswordChangeAttempted(true); // Mark that a password change was intended
-      if (!isPhoneVerifiedState) {
-        toast({ variant: "destructive", title: "Verification Required", description: "Please verify the phone number before changing the password." });
+      setPasswordChangeAttempted(true); 
+      if (!employeeUpdatePayload.phone || !employeeUpdatePayload.isPhoneVerified) {
+        toast({ variant: "destructive", title: "Verification Required", description: "A verified phone number is required to change the password." });
         setIsSubmitting(false);
         return;
       }
       if (!isPasswordChangeOtpVerified) {
         toast({ title: "OTP Required for Password", description: "Please verify OTP to change password." });
-        handleSendPasswordChangeOtp(); // Trigger OTP dialog for password change
+        handleSendPasswordChangeOtp(); 
         setIsSubmitting(false);
         return;
       }
-      // If OTP is verified for password change
       employeeUpdatePayload.password = data.passwordInput;
     } else {
-      setPasswordChangeAttempted(false); // No password change was intended this time
+      setPasswordChangeAttempted(false); 
     }
     
     const result = updateEmployee(employeeUpdatePayload as Employee);
@@ -182,22 +190,33 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
       toast({ variant: "destructive", title: "Error", description: result.message || "Failed to update employee." });
     }
     setIsSubmitting(false);
-    // Reset password change OTP verification status for next attempt if password was changed
     if (data.passwordInput && data.passwordInput.trim() !== '') {
         setIsPasswordChangeOtpVerified(false); 
     }
   };
   
-  // Effect to reset password OTP verification if password input changes
   const watchedPasswordInput = form.watch('passwordInput');
   useEffect(() => {
-    if (passwordChangeAttempted) { // Only reset if a change was previously processed/attempted
+    if (passwordChangeAttempted) { 
       setIsPasswordChangeOtpVerified(false);
     }
   }, [watchedPasswordInput, passwordChangeAttempted]);
 
+  useEffect(() => {
+    // If phone number is changed from its original value, or from empty to a new value, reset verification status
+    const currentPhoneValue = form.getValues('phone');
+    if (currentPhoneValue !== originalPhone) {
+      setIsPhoneVerifiedState(false);
+    } else if (employee) { // If phone is same as original, restore original verification status
+      setIsPhoneVerifiedState(employee.isPhoneVerified || false);
+    }
+  }, [watchedPhone, originalPhone, form, employee]);
+
 
   if (!employee) return null;
+
+  const phoneFieldHasValue = watchedPhone && watchedPhone.trim() !== '';
+  const canSubmit = !(phoneFieldHasValue && !isPhoneVerifiedState);
 
   return (
     <>
@@ -210,7 +229,6 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
-            {/* ID, Name, Designation */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="edit-id" className="text-right">Employee ID</Label>
               <Input id="edit-id" {...form.register('id')} className="col-span-3" readOnly disabled />
@@ -230,41 +248,45 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
                 </SelectContent>
               </Select>
             </div>
-            {/* New Password */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="edit-passwordInput" className="text-right">New Password</Label>
               <div className="col-span-3 relative">
                 <Input id="edit-passwordInput" type={showPassword ? "text" : "password"} {...form.register('passwordInput')} className="pr-10" placeholder="Leave blank to keep current"/>
-                <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
+                <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
               {form.formState.errors.passwordInput && <p className="col-span-3 col-start-2 text-sm text-destructive">{form.formState.errors.passwordInput.message}</p>}
             </div>
-            {/* Email */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="edit-email" className="text-right">Email</Label>
               <Input id="edit-email" type="email" {...form.register('email')} className="col-span-3" />
               {form.formState.errors.email && <p className="col-span-3 col-start-2 text-sm text-destructive">{form.formState.errors.email.message}</p>}
             </div>
-            {/* Phone Number with Verification */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="edit-phone" className="text-right">Phone</Label>
               <div className="col-span-3 flex items-center gap-2">
-                <Input id="edit-phone" {...form.register('phone')} className="flex-grow" disabled={isPhoneVerifiedState} />
-                {isPhoneVerifiedState ? (
+                <Input 
+                  id="edit-phone" 
+                  {...form.register('phone')} 
+                  className="flex-grow" 
+                  disabled={isPhoneVerifiedState && phoneFieldHasValue} 
+                />
+                {phoneFieldHasValue && isPhoneVerifiedState ? (
                   <CheckCircle className="h-5 w-5 text-green-500" />
                 ) : (
-                  <Button type="button" size="sm" variant="outline" onClick={handleSendPhoneOtp} disabled={!form.watch('phone')}>
-                    Verify
-                  </Button>
+                  phoneFieldHasValue && (
+                    <Button type="button" size="sm" variant="outline" onClick={handleSendPhoneOtp} disabled={!watchedPhone || (!!watchedPhone && isPhoneVerifiedState)}>
+                      Verify
+                    </Button>
+                  )
                 )}
               </div>
             </div>
 
             <DialogFooter>
                <Button type="button" variant="outline" onClick={handleModalClose}>Cancel</Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting || !canSubmit}>
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Save Changes
               </Button>
@@ -273,13 +295,12 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
         </DialogContent>
       </Dialog>
 
-      {/* Phone OTP Verification Dialog */}
       <Dialog open={showPhoneOtpDialog} onOpenChange={(open) => { if(!open) {setShowPhoneOtpDialog(false); setPhoneOtpInput('');} else setShowPhoneOtpDialog(true);}}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Verify Phone Number</DialogTitle>
             <DialogDescription>
-              An OTP has been sent to {form.getValues('phone')}. Please enter it below.
+              An OTP has been 'sent' to {form.getValues('phone')}. Please enter it below.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -292,13 +313,12 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
         </DialogContent>
       </Dialog>
 
-      {/* Password Change OTP Verification Dialog */}
       <Dialog open={showPasswordChangeOtpDialog} onOpenChange={(open) => { if(!open) {setShowPasswordChangeOtpDialog(false); setPasswordChangeOtpInput('');} else setShowPasswordChangeOtpDialog(true);}}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Verify Password Change</DialogTitle>
             <DialogDescription>
-              To change the password, an OTP has been sent to the verified phone number. Please enter it below.
+              To change the password, an OTP has been 'sent'. Please enter it below.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
