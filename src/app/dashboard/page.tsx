@@ -9,3 +9,5 @@ export default function DashboardPage() {
       <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
       <p className="text-muted-foreground">Loading your dashboard...</p>
     </div>
+  );
+}
