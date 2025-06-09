@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, type ReactNode } from 'react';
@@ -40,7 +41,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         router.replace('/dashboard/employee');
       }
     }
-  }, [currentUser, router]);
+  }, [currentUser, router, router.pathname]);
 
 
   return (
@@ -53,4 +54,5 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         AttendEase &copy; {new Date().getFullYear()}
       </footer>
     </div>
-  
+  );
+}
