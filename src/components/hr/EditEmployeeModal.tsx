@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { updateEmployee } from '@/lib/employeeService';
 import type { Employee } from '@/types';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 
 const editEmployeeSchema = z.object({
   id: z.string(), // Readonly
@@ -35,6 +35,7 @@ interface EditEmployeeModalProps {
 
 export default function EditEmployeeModal({ employee, isOpen, onClose, onEmployeeUpdated }: EditEmployeeModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<EditEmployeeFormValues>({
@@ -42,48 +43,54 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
   });
 
   useEffect(() => {
-    if (employee && isOpen) { // Reset form only when employee data is available and modal is open
+    if (employee && isOpen) { 
       form.reset({
         id: employee.id,
         name: employee.name,
         designation: employee.designation,
-        passwordInput: '', // Keep password field blank by default for security
+        passwordInput: '', 
         email: employee.email || '',
         phone: employee.phone || '',
       });
+      setShowPassword(false); // Reset password visibility when modal opens or employee changes
     }
-  }, [employee, form, isOpen]); // Add isOpen to dependencies
+  }, [employee, form, isOpen]); 
 
   if (!employee) return null;
 
   const onSubmit: SubmitHandler<EditEmployeeFormValues> = async (data) => {
     setIsSubmitting(true);
-    const employeeToUpdate: Partial<Employee> & { id: string } = { // Use Partial<Employee> for update
-        id: data.id, // id is always present
+    const employeeToUpdate: Partial<Employee> & { id: string } = { 
+        id: data.id, 
         name: data.name,
         designation: data.designation,
         email: data.email,
         phone: data.phone,
     };
-    // Conditionally update password if a new one is provided and is not empty
+    
     if (data.passwordInput && data.passwordInput.trim() !== '') {
         employeeToUpdate.password = data.passwordInput;
     }
 
-
-    const result = updateEmployee(employeeToUpdate as Employee); // Cast to Employee after conditional password
+    const result = updateEmployee(employeeToUpdate as Employee); 
     if (result.success) {
       toast({ title: "Success", description: "Employee details updated." });
       onEmployeeUpdated();
-      onClose(); // This will also trigger useEffect to reset form if modal reopens
+      onClose(); 
     } else {
       toast({ variant: "destructive", title: "Error", description: result.message || "Failed to update employee." });
     }
     setIsSubmitting(false);
   };
+  
+  const handleModalClose = () => {
+    setShowPassword(false); // Reset password visibility on manual close
+    onClose();
+  };
+
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleModalClose(); else onClose(); /* handles open from trigger */ }}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="font-headline">Edit Employee: {employee.name}</DialogTitle>
@@ -99,13 +106,13 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="edit-name" className="text-right">Full Name</Label>
             <Input id="edit-name" {...form.register('name')} className="col-span-3" />
-            {form.formState.errors.name && <p className="col-span-4 text-right text-sm text-destructive">{form.formState.errors.name.message}</p>}
+            {form.formState.errors.name && <p className="col-span-3 col-start-2 text-sm text-destructive">{form.formState.errors.name.message}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="edit-designation" className="text-right">Designation</Label>
             <Select
               onValueChange={(value) => form.setValue('designation', value as 'Employee' | 'HR')}
-              value={form.watch('designation')} // Use watch to ensure Select updates
+              value={form.watch('designation')} 
             >
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Select designation" />
@@ -115,26 +122,49 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
                 <SelectItem value="HR">HR</SelectItem>
               </SelectContent>
             </Select>
-            {form.formState.errors.designation && <p className="col-span-4 text-right text-sm text-destructive">{form.formState.errors.designation.message}</p>}
+            {form.formState.errors.designation && <p className="col-span-3 col-start-2 text-sm text-destructive">{form.formState.errors.designation.message}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="edit-passwordInput" className="text-right">New Password</Label>
-            <Input id="edit-passwordInput" type="password" {...form.register('passwordInput')} className="col-span-3" placeholder="Leave blank to keep current"/>
-            {form.formState.errors.passwordInput && <p className="col-span-4 text-right text-sm text-destructive">{form.formState.errors.passwordInput.message}</p>}
+            <div className="col-span-3 relative">
+              <Input 
+                id="edit-passwordInput" 
+                type={showPassword ? "text" : "password"} 
+                {...form.register('passwordInput')} 
+                className="pr-10" 
+                placeholder="Leave blank to keep current"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" aria-hidden="true" />
+                ) : (
+                  <Eye className="h-4 w-4" aria-hidden="true" />
+                )}
+                <span className="sr-only">{showPassword ? 'Hide password' : 'Show password'}</span>
+              </Button>
+            </div>
+            {form.formState.errors.passwordInput && <p className="col-span-3 col-start-2 text-sm text-destructive">{form.formState.errors.passwordInput.message}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="edit-email" className="text-right">Email</Label>
             <Input id="edit-email" type="email" {...form.register('email')} className="col-span-3" />
-            {form.formState.errors.email && <p className="col-span-4 text-right text-sm text-destructive">{form.formState.errors.email.message}</p>}
+            {form.formState.errors.email && <p className="col-span-3 col-start-2 text-sm text-destructive">{form.formState.errors.email.message}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="edit-phone" className="text-right">Phone</Label>
             <Input id="edit-phone" {...form.register('phone')} className="col-span-3" />
-            {form.formState.errors.phone && <p className="col-span-4 text-right text-sm text-destructive">{form.formState.errors.phone.message}</p>}
+            {form.formState.errors.phone && <p className="col-span-3 col-start-2 text-sm text-destructive">{form.formState.errors.phone.message}</p>}
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={handleModalClose}>Cancel</Button>
             </DialogClose>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
