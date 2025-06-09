@@ -97,4 +97,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature
+    font-feature-settings: "liga" 1, "calt" 1; /* Apply common ligatures and contextual alternates */
+    -webkit-font-smoothing: antialiased; /* Better font rendering on WebKit */
+    -moz-osx-font-smoothing: grayscale; /* Better font rendering on Firefox */
+  }
+}

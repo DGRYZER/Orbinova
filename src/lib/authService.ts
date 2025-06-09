@@ -34,6 +34,8 @@ export function login(employeeId: string, passwordAttempt: string, designationAt
       id: employee.id,
       name: employee.name,
       designation: employee.designation,
+      email: employee.email, // Make sure to include email if it exists on Employee and User types
+      phone: employee.phone, // Make sure to include phone if it exists on Employee and User types
     };
     setItem<User>(CURRENT_USER_KEY, currentUser);
     return currentUser;
@@ -46,4 +48,5 @@ export function logout(): void {
 }
 
 export function getCurrentUser(): User | null {
-  return getItem<
+  return getItem<User>(CURRENT_USER_KEY);
+}
