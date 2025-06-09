@@ -101,8 +101,8 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
     }
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     setGeneratedPhoneOtp(otp);
-    console.log(`Phone Verification OTP for ${phoneValue}: ${otp}`);
-    toast({ title: "OTP Sent (Simulated)", description: `OTP for phone verification is ${otp} (check console).` });
+    // console.log(`Phone Verification OTP for ${phoneValue}: ${otp}`); // Removed for security
+    toast({ title: "OTP Sent (Simulated)", description: `An OTP has been sent to ${phoneValue}. Please check your device.` });
     setShowPhoneOtpDialog(true);
   };
 
@@ -125,8 +125,8 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
   const handleSendPasswordChangeOtp = () => {
     const otp = generateAlphanumericOtp(10);
     setGeneratedPasswordChangeOtp(otp);
-    console.log(`Password Change OTP for ${employee?.name}: ${otp}`);
-    toast({ title: "Password OTP Sent (Simulated)", description: `Password change OTP is ${otp} (check console).` });
+    // console.log(`Password Change OTP for ${employee?.name}: ${otp}`); // Removed for security
+    toast({ title: "Password OTP Sent (Simulated)", description: `A password change OTP has been sent to the verified phone number. Please check your device.` });
     setShowPasswordChangeOtpDialog(true);
   };
 
@@ -235,7 +235,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
               <Label htmlFor="edit-passwordInput" className="text-right">New Password</Label>
               <div className="col-span-3 relative">
                 <Input id="edit-passwordInput" type={showPassword ? "text" : "password"} {...form.register('passwordInput')} className="pr-10" placeholder="Leave blank to keep current"/>
-                <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
+                <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
@@ -279,7 +279,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
           <DialogHeader>
             <DialogTitle>Verify Phone Number</DialogTitle>
             <DialogDescription>
-              An OTP has been sent to {form.getValues('phone')}. Please enter it below. (Check console for OTP: {generatedPhoneOtp})
+              An OTP has been sent to {form.getValues('phone')}. Please enter it below.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -298,7 +298,7 @@ export default function EditEmployeeModal({ employee, isOpen, onClose, onEmploye
           <DialogHeader>
             <DialogTitle>Verify Password Change</DialogTitle>
             <DialogDescription>
-              To change the password, an OTP has been sent to the verified phone number. (Check console for OTP: {generatedPasswordChangeOtp})
+              To change the password, an OTP has been sent to the verified phone number. Please enter it below.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">

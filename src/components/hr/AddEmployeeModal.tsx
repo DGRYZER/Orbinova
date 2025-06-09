@@ -78,8 +78,8 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
     }
     const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
     setGeneratedPhoneOtp(otp);
-    console.log(`Phone Verification OTP for ${phoneValue}: ${otp}`); // Simulate sending OTP
-    toast({ title: "OTP Sent (Simulated)", description: `OTP for phone verification is ${otp} (check console).` });
+    // console.log(`Phone Verification OTP for ${phoneValue}: ${otp}`); // Simulate sending OTP - Removed for security
+    toast({ title: "OTP Sent (Simulated)", description: `An OTP has been sent to ${phoneValue}. Please check your device.` });
     setShowPhoneOtpDialog(true);
   };
 
@@ -163,7 +163,7 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  className="absolute right-0 top-0 h-full px-3 py-2"
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex={-1}
                 >
@@ -213,7 +213,7 @@ export default function AddEmployeeModal({ onEmployeeAdded }: AddEmployeeModalPr
           <DialogHeader>
             <DialogTitle>Verify Phone Number</DialogTitle>
             <DialogDescription>
-              An OTP has been sent to {form.getValues('phone')}. Please enter it below. (Check console for OTP: {generatedPhoneOtp})
+              An OTP has been sent to {form.getValues('phone')}. Please enter it below.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
