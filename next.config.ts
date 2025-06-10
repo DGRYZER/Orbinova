@@ -1,3 +1,4 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
@@ -17,12 +18,6 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
-  },
-  // Attempt to disable Next.js development indicators like the build activity indicator.
-  devIndicators: {
-    buildActivity: false,
-    // You could also try disabling autoPrerender indicator if it's a lightning bolt:
-    // autoPrerender: false, 
   },
 };
 
