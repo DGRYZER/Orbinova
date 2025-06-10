@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -6,6 +7,9 @@ import { AuthProvider } from '@/hooks/useAuth';
 export const metadata: Metadata = {
   title: 'AttendEase - Office Attendance App',
   description: 'Modern office employee attendance management system.',
+  icons: {
+    icon: '/favicon.ico', // If your icon is e.g. my-logo.png, change this to '/my-logo.png'
+  },
 };
 
 export default function RootLayout({
