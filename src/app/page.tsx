@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
@@ -44,9 +45,6 @@ export default function LandingPage() {
       </Card>
       <footer className="mt-8 sm:mt-12 text-center text-sm text-muted-foreground/80">
         <p>&copy; {new Date().getFullYear()} AttendEase. All rights reserved.</p>
-        <p className="font-code text-xs mt-1 text-muted-foreground/60">
-          Powered by Next.js & Shadcn/UI
-        </p>
       </footer>
     </main>
   );
