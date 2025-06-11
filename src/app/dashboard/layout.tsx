@@ -33,7 +33,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        <p className="ml-4 text-lg font-medium">Loading AttendEase...</p>
+        <p className="ml-4 text-lg font-medium">Loading Orbinova...</p>
       </div>
     );
   }
@@ -51,7 +51,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         {children}
       </main>
       <footer className="py-4 text-center text-xs text-muted-foreground border-t">
-        AttendEase &copy; {new Date().getFullYear()}
+        <p>Orbinova &copy; {new Date().getFullYear()}</p>
+        <p>Created by Debajyoti</p>
       </footer>
     </div>
   );

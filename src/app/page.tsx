@@ -13,7 +13,7 @@ export default function LandingPage() {
             <Building2 className="h-12 w-12 text-primary" />
           </div>
           <CardTitle className="text-3xl sm:text-4xl font-headline text-primary tracking-tight">
-            AttendEase
+            Orbinova
           </CardTitle>
           <CardDescription className="text-base sm:text-lg text-muted-foreground mt-2">
             Streamlined Office Attendance Management
@@ -21,7 +21,7 @@ export default function LandingPage() {
         </CardHeader>
         <CardContent className="space-y-6 px-6 sm:px-8 pb-6 sm:pb-8">
           <p className="text-center text-muted-foreground">
-            Welcome to AttendEase! Please select your login type.
+            Welcome to Orbinova! Please select your login type.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Link href="/hr-login" passHref>
@@ -44,7 +44,8 @@ export default function LandingPage() {
         </CardContent>
       </Card>
       <footer className="mt-8 sm:mt-12 text-center text-sm text-muted-foreground/80">
-        <p>&copy; {new Date().getFullYear()} AttendEase. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Orbinova. All rights reserved.</p>
+        <p>Created by Debajyoti</p>
       </footer>
     </main>
   );
