@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { Building2 } from "lucide-react"; // Or a different icon if desired, e.g. Fingerprint
+import { Building2, UserPlus } from "lucide-react"; // Or a different icon if desired, e.g. Fingerprint
 
 export default function LandingPage() {
   return (
@@ -21,7 +21,7 @@ export default function LandingPage() {
         </CardHeader>
         <CardContent className="space-y-6 px-6 sm:px-8 pb-6 sm:pb-8">
           <p className="text-center text-muted-foreground">
-            Welcome to Orbinova! Please select your login type.
+            Welcome to Orbinova! Please select your action.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Link href="/hr-login" passHref>
@@ -38,6 +38,16 @@ export default function LandingPage() {
                 className="w-full h-12 text-base font-medium border-primary text-primary hover:bg-primary/10 hover:text-primary transition-all duration-300 ease-in-out transform hover:scale-[1.02] focus:scale-[1.02] focus:ring-2 focus:ring-ring focus:ring-offset-2"
               >
                 Employee Login
+              </Button>
+            </Link>
+          </div>
+          <div className="mt-4">
+            <Link href="/hr-signup" passHref>
+              <Button 
+                variant="secondary" 
+                className="w-full h-12 text-base font-medium transition-all duration-300 ease-in-out transform hover:scale-[1.02] focus:scale-[1.02] focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              >
+                <UserPlus className="mr-2 h-5 w-5" /> HR Sign Up
               </Button>
             </Link>
           </div>
