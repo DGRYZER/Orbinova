@@ -2,12 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { Building2, UserPlus } from "lucide-react"; // Or a different icon if desired, e.g. Fingerprint
+import { Building2, UserPlus } from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 bg-gradient-to-br from-background via-primary/10 to-secondary/20 dark:from-slate-900 dark:via-primary/15 dark:to-slate-800/90 transition-colors duration-300">
-      <Card className="w-full max-w-md shadow-xl rounded-xl">
+    <main className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 transition-colors duration-300">
+      <Card className="w-full max-w-md shadow-xl rounded-xl bg-card/80 backdrop-blur-sm">
         <CardHeader className="text-center p-6 sm:p-8">
           <div className="mx-auto mb-6 p-4 bg-primary/10 rounded-full w-fit">
             <Building2 className="h-12 w-12 text-primary" />

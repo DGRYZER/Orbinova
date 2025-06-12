@@ -4,93 +4,107 @@
 
 @layer base {
   :root {
-    --background: 140 60% 96%; /* Very light, soft green */
-    --foreground: 140 15% 25%; /* Dark, desaturated green-grey */
+    /* Light Mode: Deep Sea Green & Light Sea Green Theme */
+    --background: 165 60% 93%; /* Solid Light Sea Green (very light) */
+    --foreground: 170 40% 25%; /* Dark, desaturated teal for text */
 
-    --card: 140 50% 98%; /* Almost white, hint of green */
-    --card-foreground: 140 15% 25%;
+    --background-gradient-start: 160 65% 90%;
+    --background-gradient-mid: 170 60% 94%;
+    --background-gradient-end: 180 65% 91%;
 
-    --popover: 140 50% 98%; /* Almost white, hint of green */
-    --popover-foreground: 140 15% 25%;
+    --card: 165 60% 96%; /* Slightly lighter than background for cards */
+    --card-foreground: 170 40% 23%;
 
-    --primary: 130 55% 45%; /* WhatsApp-ish Green/Teal */
-    --primary-foreground: 130 30% 95%; /* Very light green/white */
+    --popover: 165 60% 97%;
+    --popover-foreground: 170 40% 22%;
 
-    --secondary: 130 40% 90%; /* Lighter, muted teal/green */
-    --secondary-foreground: 130 25% 30%; /* Darker text for secondary */
+    --primary: 170 65% 38%; /* Deep Sea Green */
+    --primary-foreground: 170 20% 96%; /* Very light for text on primary */
 
-    --muted: 130 40% 95%; /* Very light gray-green */
-    --muted-foreground: 130 15% 45%; /* Medium gray-green */
+    --secondary: 160 50% 88%; /* Lighter, muted sea green */
+    --secondary-foreground: 160 35% 30%; 
 
-    --accent: 200 70% 50%; /* Pleasant Blue for actions/links */
-    --accent-foreground: 200 100% 97%; /* Very light blue/white */
+    --muted: 160 50% 94%; 
+    --muted-foreground: 160 30% 50%;
 
-    --destructive: 0 72% 51%; /* Standard Red */
+    --accent: 175 60% 45%; /* Alternate Deep Sea Green for accents */
+    --accent-foreground: 175 15% 97%;
+
+    --destructive: 0 70% 55%; 
     --destructive-foreground: 0 0% 98%;
 
-    --border: 130 30% 88%; /* Light gray-green border */
-    --input: 130 40% 94%; /* Slightly off-white/green input background */
-    --ring: 130 55% 50%; /* Ring color related to primary */
+    --border: 165 50% 85%; 
+    --input: 165 55% 90%; 
+    --ring: 170 65% 40%; /* Ring color related to primary */
 
-    --chart-1: 130 55% 50%; /* Primary Green/Teal */
-    --chart-2: 200 70% 55%;  /* Accent Blue */
-    --chart-3: 110 45% 60%; /* Lime Green */
-    --chart-4: 140 40% 65%;  /* Seafoam Green */
-    --chart-5: 190 50% 45%; /* Deeper Teal/Blue */
+    --chart-1: 170 65% 40%; 
+    --chart-2: 175 60% 48%;  
+    --chart-3: 155 55% 55%; 
+    --chart-4: 180 50% 50%;  
+    --chart-5: 165 60% 60%; 
     --radius: 0.5rem;
 
     /* Sidebar variables - Light Theme */
-    --sidebar-background: 140 50% 95%;
-    --sidebar-foreground: 140 15% 20%;
-    --sidebar-primary: 130 55% 42%;
-    --sidebar-primary-foreground: 130 30% 95%;
-    --sidebar-accent: 200 70% 52%;
-    --sidebar-accent-foreground: 200 100% 97%;
-    --sidebar-border: 130 30% 85%;
-    --sidebar-ring: 130 55% 52%;
+    --sidebar-background: 165 60% 92%;
+    --sidebar-foreground: 170 40% 20%;
+    --sidebar-primary: 170 65% 35%;
+    --sidebar-primary-foreground: 170 20% 95%;
+    --sidebar-accent: 175 60% 42%;
+    --sidebar-accent-foreground: 175 15% 96%;
+    --sidebar-border: 165 50% 82%;
+    --sidebar-ring: 170 65% 38%;
   }
 
   .dark {
-    --background: 150 20% 8%; /* Very dark, desaturated teal-charcoal */
-    --foreground: 150 15% 88%; /* Light teal-grey */
+    /* Dark Mode: Deep Sea Green & Dark Light Sea Green Theme */
+    --background: 170 40% 12%; /* Solid Dark Light Sea Green */
+    --foreground: 165 30% 88%; /* Light teal-grey for text */
+    
+    --background-gradient-start: 160 45% 10%;
+    --background-gradient-mid: 170 40% 14%;
+    --background-gradient-end: 180 45% 11%;
 
-    --card: 150 20% 12%; /* Slightly lighter than background */
-    --card-foreground: 150 15% 88%;
+    --card: 170 40% 10%; /* Slightly darker than background for cards */
+    --card-foreground: 165 30% 85%;
 
-    --popover: 150 20% 12%;
-    --popover-foreground: 150 15% 88%;
+    --popover: 170 40% 9%;
+    --popover-foreground: 165 30% 85%;
 
-    --primary: 130 50% 55%; /* Vibrant Teal/Green for dark mode */
-    --primary-foreground: 130 20% 10%; /* Very dark for contrast */
+    --primary: 170 60% 55%; /* Deep Sea Green - vibrant for dark mode */
+    --primary-foreground: 170 20% 10%; 
 
-    --secondary: 140 25% 25%; /* Muted, dark teal/green */
-    --secondary-foreground: 140 15% 80%; /* Light text for secondary */
+    --secondary: 160 35% 25%; 
+    --secondary-foreground: 160 25% 80%; 
 
-    --muted: 140 20% 20%; /* Darker than secondary */
-    --muted-foreground: 140 10% 60%; /* Lighter text for muted */
+    --muted: 160 30% 20%; 
+    --muted-foreground: 160 20% 65%;
 
-    --accent: 200 65% 60%; /* Brighter Blue for dark mode */
-    --accent-foreground: 200 20% 15%; /* Dark text on accent */
+    --accent: 175 55% 60%; /* Brighter Deep Sea Green for dark mode accents */
+    --accent-foreground: 175 15% 12%; 
 
-    --destructive: 0 63% 50%; /* Standard Red */
+    --destructive: 0 60% 50%; 
     --destructive-foreground: 0 0% 98%;
 
-    --border: 150 20% 18%; /* Slightly lighter than card */
-    --input: 150 20% 16%; /* Similar to card */
-    --ring: 130 50% 60%; /* Ring color related to primary */
+    --border: 170 35% 18%; 
+    --input: 170 38% 15%; 
+    --ring: 170 60% 58%; /* Ring color related to primary */
     
-    /* Chart colors remain the same HSL definitions, will pick up dark theme base */
-
-    /* Dark Sidebar variables */
-    --sidebar-background: 150 20% 10%;
-    --sidebar-foreground: 150 15% 85%;
-    --sidebar-primary: 130 50% 58%;
-    --sidebar-primary-foreground: 130 20% 10%;
-    --sidebar-accent: 200 65% 62%;
-    --sidebar-accent-foreground: 200 20% 15%;
-    --sidebar-border: 150 20% 16%;
-    --sidebar-ring: 130 50% 62%;
+    /* Sidebar variables - Dark Theme */
+    --sidebar-background: 170 40% 11%;
+    --sidebar-foreground: 165 30% 86%;
+    --sidebar-primary: 170 60% 52%;
+    --sidebar-primary-foreground: 170 20% 8%;
+    --sidebar-accent: 175 55% 58%;
+    --sidebar-accent-foreground: 175 15% 10%;
+    --sidebar-border: 170 35% 16%;
+    --sidebar-ring: 170 60% 55%;
   }
+}
+
+@keyframes animatedGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 @layer base {
@@ -98,9 +112,12 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "liga" 1, "calt" 1; /* Apply common ligatures and contextual alternates */
-    -webkit-font-smoothing: antialiased; /* Better font rendering on WebKit */
-    -moz-osx-font-smoothing: grayscale; /* Better font rendering on Firefox */
+    @apply text-foreground;
+    background: linear-gradient(135deg, hsl(var(--background-gradient-start)), hsl(var(--background-gradient-mid)), hsl(var(--background-gradient-end)));
+    background-size: 300% 300%; /* Smaller size for potentially faster perceived animation */
+    animation: animatedGradient 18s ease infinite; /* Slightly slower animation */
+    font-feature-settings: "liga" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }

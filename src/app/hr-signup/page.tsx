@@ -86,8 +86,8 @@ export default function HrSignUpPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-background via-secondary/15 to-primary/10 dark:from-background dark:via-secondary/20 dark:to-primary/15 p-4">
-      <Card className="w-full max-w-md shadow-2xl">
+    <div className="flex items-center justify-center min-h-screen p-4">
+      <Card className="w-full max-w-md shadow-2xl bg-card/80 backdrop-blur-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-headline text-primary">HR Account Sign Up</CardTitle>
           <CardDescription>Create a new HR administrator account.</CardDescription>
