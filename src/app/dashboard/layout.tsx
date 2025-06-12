@@ -45,7 +45,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen flex flex-col bg-background">
       <DashboardHeader />
       <main className="flex-1 container py-8 max-w-screen-2xl">
         {children}

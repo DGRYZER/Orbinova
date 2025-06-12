@@ -6,7 +6,7 @@ import { Building2, UserPlus } from "lucide-react"; // Or a different icon if de
 
 export default function LandingPage() {
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 bg-gradient-to-br from-background via-primary/5 to-secondary/10 dark:from-slate-950 dark:via-primary/10 dark:to-slate-900 transition-colors duration-300">
+    <main className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 bg-gradient-to-br from-background via-primary/10 to-secondary/20 dark:from-slate-900 dark:via-primary/15 dark:to-slate-800/90 transition-colors duration-300">
       <Card className="w-full max-w-md shadow-xl rounded-xl">
         <CardHeader className="text-center p-6 sm:p-8">
           <div className="mx-auto mb-6 p-4 bg-primary/10 rounded-full w-fit">
@@ -25,16 +25,16 @@ export default function LandingPage() {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Link href="/hr-login" passHref>
-              <Button 
-                variant="default" 
+              <Button
+                variant="default"
                 className="w-full h-12 text-base font-medium hover:bg-primary/90 transition-all duration-300 ease-in-out transform hover:scale-[1.02] focus:scale-[1.02] focus:ring-2 focus:ring-ring focus:ring-offset-2"
               >
                 HR Login
               </Button>
             </Link>
             <Link href="/employee-login" passHref>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full h-12 text-base font-medium border-primary text-primary hover:bg-primary/10 hover:text-primary transition-all duration-300 ease-in-out transform hover:scale-[1.02] focus:scale-[1.02] focus:ring-2 focus:ring-ring focus:ring-offset-2"
               >
                 Employee Login
@@ -43,8 +43,8 @@ export default function LandingPage() {
           </div>
           <div className="mt-4">
             <Link href="/hr-signup" passHref>
-              <Button 
-                variant="secondary" 
+              <Button
+                variant="secondary"
                 className="w-full h-12 text-base font-medium transition-all duration-300 ease-in-out transform hover:scale-[1.02] focus:scale-[1.02] focus:ring-2 focus:ring-ring focus:ring-offset-2"
               >
                 <UserPlus className="mr-2 h-5 w-5" /> HR Sign Up
