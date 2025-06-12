@@ -1,0 +1,5 @@
+E0612 11:46:29.939827   18808 load.go:23] Could not load config from "c:\\1. MY FOLDER\\Projects\\Office Attendance Portal\\dataconnect": could not find dataconnect.yaml in `c:\1. MY FOLDER\Projects\Office Attendance Portal\dataconnect`
+E0612 11:46:29.940911   18808 watch.go:76] watchAllDir unable to walk dir `c:\1. MY FOLDER\Projects\Office Attendance Portal\dataconnect`: on path "c:\\1. MY FOLDER\\Projects\\Office Attendance Portal\\dataconnect" (DirEntry: <nil>): CreateFile c:\1. MY FOLDER\Projects\Office Attendance Portal\dataconnect: The system cannot find the file specified.
+I0612 11:46:29.948936   18808 dev.go:95] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+E0612 11:46:39.949626   18808 load.go:23] Could not load config from "c:\\1. MY FOLDER\\Projects\\Office Attendance Portal\\dataconnect": could not find dataconnect.yaml in `c:\1. MY FOLDER\Projects\Office Attendance Portal\dataconnect`
+E0612 11:46:49.948134   18808 load.go:23] Could not load config from "c:\\1. MY FOLDER\\Projects\\Office Attendance Portal\\dataconnect": could not find dataconnect.yaml in `c:\1. MY FOLDER\Projects\Office Attendance Portal\dataconnect`
