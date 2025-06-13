@@ -24,32 +24,31 @@ export default function LandingPage() {
             Welcome to Orbinova! Please select your action.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Link href="/hr-login" passHref>
-              <Button
-                variant="default"
-                className="w-full h-12 text-base font-medium hover:bg-primary/90 transition-all duration-300 ease-in-out transform hover:scale-[1.02] focus:scale-[1.02] focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
-                HR Login
-              </Button>
-            </Link>
-            <Link href="/employee-login" passHref>
-              <Button
-                variant="outline"
-                className="w-full h-12 text-base font-medium border-primary text-primary hover:bg-primary/10 hover:text-primary transition-all duration-300 ease-in-out transform hover:scale-[1.02] focus:scale-[1.02] focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
-                Employee Login
-              </Button>
-            </Link>
+            <Button
+              asChild
+              variant="default"
+              className="w-full h-12 text-base font-medium hover:bg-primary/90 transition-all duration-300 ease-in-out transform hover:scale-[1.02] focus:scale-[1.02] focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <Link href="/hr-login">HR Login</Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="w-full h-12 text-base font-medium border-primary text-primary hover:bg-primary/10 hover:text-primary transition-all duration-300 ease-in-out transform hover:scale-[1.02] focus:scale-[1.02] focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <Link href="/employee-login">Employee Login</Link>
+            </Button>
           </div>
           <div className="mt-4">
-            <Link href="/hr-signup" passHref>
-              <Button
-                variant="secondary"
-                className="w-full h-12 text-base font-medium transition-all duration-300 ease-in-out transform hover:scale-[1.02] focus:scale-[1.02] focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
+            <Button
+              asChild
+              variant="secondary"
+              className="w-full h-12 text-base font-medium transition-all duration-300 ease-in-out transform hover:scale-[1.02] focus:scale-[1.02] focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <Link href="/hr-signup">
                 <UserPlus className="mr-2 h-5 w-5" /> HR Sign Up
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </CardContent>
       </Card>
