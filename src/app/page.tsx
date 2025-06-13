@@ -6,7 +6,7 @@ import { Building2, UserPlus } from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 transition-colors duration-300">
+    <main className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 transition-colors duration-300 bg-gradient-to-br from-green-400/20 via-teal-500/20 to-blue-600/20">
       <Card className="w-full max-w-md shadow-xl rounded-xl bg-card/80 backdrop-blur-sm">
         <CardHeader className="text-center p-6 sm:p-8">
           <div className="mx-auto mb-6 p-4 bg-primary/10 rounded-full w-fit">

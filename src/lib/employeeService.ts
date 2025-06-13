@@ -13,6 +13,11 @@ export function getEmployeeById(id: string): Employee | undefined {
   return employees.find(emp => emp.id === id);
 }
 
+export function doesHrIdExist(employeeId: string): boolean {
+  const employees = getAllEmployees();
+  return employees.some(emp => emp.id === employeeId && emp.designation === 'HR');
+}
+
 export function addEmployee(newEmployeeData: Omit<Employee, 'password' | 'id'> & { id: string; passwordInput: string }): { success: boolean, message?: string } {
   const employees = getAllEmployees();
   if (employees.some(emp => emp.id === newEmployeeData.id)) {
@@ -70,3 +75,4 @@ export function removeEmployee(employeeId: string): { success: boolean, message?
   // Consider also removing associated attendance records or anonymizing them
   return { success: true };
 }
+
