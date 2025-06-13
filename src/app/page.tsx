@@ -1,10 +1,19 @@
 
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Building2, UserPlus } from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 export default function LandingPage() {
+  const router = useRouter();
+
+  const handleHrLoginClick = () => {
+    router.push('/hr-login');
+  };
+
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 transition-colors duration-300 bg-gradient-to-br from-green-400/20 via-teal-500/20 to-blue-600/20">
       <Card className="w-full max-w-md shadow-xl rounded-xl bg-card/80 backdrop-blur-sm">
@@ -25,11 +34,11 @@ export default function LandingPage() {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Button
-              asChild
               variant="default"
               className="w-full h-12 text-base font-medium hover:bg-primary/90 transition-all duration-300 ease-in-out transform hover:scale-[1.02] focus:scale-[1.02] focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              onClick={handleHrLoginClick}
             >
-              <Link href="/hr-login">HR Login</Link>
+              HR Login
             </Button>
             <Button
               asChild
