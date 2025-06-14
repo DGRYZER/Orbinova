@@ -29,4 +29,3 @@
 - Code font: 'Source Code Pro' for displaying code snippets.
 - Use simple, clear icons from a library like Feather or Tabler Icons to represent actions and statuses.
 - Clean, modern layout using Flexbox and Grid for responsiveness across devices. Prioritize clarity and ease of use.
->>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
