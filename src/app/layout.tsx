@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -8,7 +11,11 @@ export const metadata: Metadata = {
   title: 'Orbinova',
   description: 'Modern office employee attendance management system.',
   icons: {
+<<<<<<< HEAD
     icon: '/favicon.ico', // If your icon is e.g. my-logo.png, change this to '/my-logo.png'
+=======
+    icon: '/favicon.png',
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
   },
 };
 
@@ -34,4 +41,8 @@ export default function RootLayout({
       </body>
     </html>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a

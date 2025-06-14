@@ -61,9 +61,15 @@ export default function AccountPage() {
             </div>
           </div>
           
+<<<<<<< HEAD
           <Button variant="outline" className="mt-4 w-full sm:w-auto" disabled>
             <Edit3 className="mr-2 h-4 w-4" /> Edit Profile (Feature coming soon)
           </Button>
+=======
+          {/* <Button variant="outline" className="mt-4 w-full sm:w-auto" disabled>
+            <Edit3 className="mr-2 h-4 w-4" /> Edit Profile (Feature coming soon)
+          </Button> */}
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
            <p className="text-xs text-muted-foreground mt-2">
             To change your password or update phone number, please contact HR. Self-service options are coming soon.
           </p>

@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
 import Link from 'next/link';
 import LiveClock from './LiveClock';
 import UserProfileDropdown from './UserProfileDropdown';

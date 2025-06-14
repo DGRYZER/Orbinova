@@ -45,14 +45,22 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }
 
   return (
+<<<<<<< HEAD
     <div className="min-h-screen flex flex-col bg-background">
+=======
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
       <DashboardHeader />
       <main className="flex-1 container py-8 max-w-screen-2xl">
         {children}
       </main>
       <footer className="py-4 text-center text-xs text-muted-foreground border-t">
+<<<<<<< HEAD
         <p>Orbinova &copy; {new Date().getFullYear()}</p>
         <p>Created by Debajyoti</p>
+=======
+        Orbinova &copy; {new Date().getFullYear()}
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
       </footer>
     </div>
   );

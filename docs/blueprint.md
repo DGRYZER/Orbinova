@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 # **App Name**: AttendEase
+=======
+# **App Name**: Orbinova (“Orb” - global, inclusive + “Nova” - new star; fresh approach to workforce systems)
+
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
 
 ## Core Features:
 

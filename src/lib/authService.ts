@@ -2,8 +2,13 @@
 import type { Employee, User } from '@/types';
 import { getItem, setItem, removeItem } from './localStorageUtils';
 
+<<<<<<< HEAD
 const EMPLOYEES_KEY = 'attendease-employees';
 const CURRENT_USER_KEY = 'attendease-currentUser';
+=======
+const EMPLOYEES_KEY = 'Orbinova-employees';
+const CURRENT_USER_KEY = 'Orbinova-currentUser';
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
 
 // Initialize with a default HR admin if no employees exist
 export function initializeDefaultAdmin(): void {

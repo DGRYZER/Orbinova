@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+<<<<<<< HEAD
     /* Light Mode: Deep & Rich Sea Greens / Teals */
     --background-gradient-start: 180 50% 80%; /* Soft Aqua */
     --background-gradient-mid: 190 55% 85%;   /* Lighter Mid Teal */
@@ -114,11 +115,101 @@
   100% { background-position: 0% 50%; }
 }
 
+=======
+    --background: 208 100% 97%; /* Very light blue (#F0F8FF) */
+    --foreground: 220 10% 20%; /* Dark grayish blue for text */
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 10% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 10% 20%;
+
+    --primary: 207 100% 73%; /* Light calming blue (#74B9FF) */
+    --primary-foreground: 210 50% 15%; /* Dark blue for text on primary */
+
+    --secondary: 210 40% 90%; /* Lighter blue-gray */
+    --secondary-foreground: 220 10% 20%;
+
+    --muted: 210 40% 95%; /* Very light blue-gray */
+    --muted-foreground: 220 10% 45%;
+
+    --accent: 262 47% 73%; /* Soft purple (#B19CD9) */
+    --accent-foreground: 0 0% 100%; /* White text on accent */
+
+    --destructive: 0 72% 51%; /* Keeping a standard red for destructive actions */
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 210 30% 85%; /* Light blue-gray border */
+    --input: 210 30% 92%; /* Slightly darker input background */
+    --ring: 207 90% 60%; /* Ring color related to primary */
+
+    --chart-1: 207 90% 54%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+
+    /* Sidebar variables (can be adjusted if a complex sidebar is used later) */
+    --sidebar-background: 208 80% 95%;
+    --sidebar-foreground: 220 10% 25%;
+    --sidebar-primary: 207 90% 60%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 262 60% 80%;
+    --sidebar-accent-foreground: 210 50% 15%;
+    --sidebar-border: 208 50% 88%;
+    --sidebar-ring: 207 90% 60%;
+  }
+
+  .dark {
+    --background: 220 15% 10%; /* Dark blue-gray */
+    --foreground: 210 40% 95%; /* Light gray */
+
+    --card: 220 15% 13%;
+    --card-foreground: 210 40% 95%;
+
+    --popover: 220 15% 10%;
+    --popover-foreground: 210 40% 95%;
+
+    --primary: 207 100% 73%; /* Same as light, vibrant */
+    --primary-foreground: 210 50% 15%; /* Dark text still works */
+
+    --secondary: 220 15% 20%; /* Darker secondary */
+    --secondary-foreground: 210 40% 95%;
+
+    --muted: 220 15% 25%; /* Darker muted */
+    --muted-foreground: 210 30% 70%;
+
+    --accent: 262 47% 73%; /* Same as light, vibrant */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 63% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 15% 25%;
+    --input: 220 15% 20%;
+    --ring: 207 90% 65%;
+
+    /* Dark Sidebar variables */
+    --sidebar-background: 220 15% 12%;
+    --sidebar-foreground: 210 40% 90%;
+    --sidebar-primary: 207 90% 65%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 262 50% 78%;
+    --sidebar-accent-foreground: 210 40% 95%;
+    --sidebar-border: 220 15% 20%;
+    --sidebar-ring: 207 90% 65%;
+  }
+}
+
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
 @layer base {
   * {
     @apply border-border;
   }
   body {
+<<<<<<< HEAD
     @apply text-foreground;
     background: linear-gradient(135deg, hsl(var(--background-gradient-start)), hsl(var(--background-gradient-mid)), hsl(var(--background-gradient-end)));
     background-size: 300% 300%;
@@ -126,5 +217,11 @@
     font-feature-settings: "liga" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+=======
+    @apply bg-background text-foreground;
+    font-feature-settings: "liga" 1, "calt" 1; /* Apply common ligatures and contextual alternates */
+    -webkit-font-smoothing: antialiased; /* Better font rendering on WebKit */
+    -moz-osx-font-smoothing: grayscale; /* Better font rendering on Firefox */
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
   }
 }

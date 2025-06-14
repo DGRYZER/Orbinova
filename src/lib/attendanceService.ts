@@ -2,7 +2,11 @@ import type { AttendanceRecord } from '@/types';
 import { getItem, setItem } from './localStorageUtils';
 import { format, parse, differenceInMinutes, isAfter, setHours, setMinutes, setSeconds } from 'date-fns';
 
+<<<<<<< HEAD
 const ATTENDANCE_KEY = 'attendease-attendance';
+=======
+const ATTENDANCE_KEY = 'Orbinova-attendance';
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
 
 export function getAllAttendanceRecords(): AttendanceRecord[] {
   return getItem<AttendanceRecord[]>(ATTENDANCE_KEY) || [];

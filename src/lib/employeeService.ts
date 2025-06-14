@@ -2,7 +2,11 @@
 import type { Employee } from '@/types';
 import { getItem, setItem } from './localStorageUtils';
 
+<<<<<<< HEAD
 const EMPLOYEES_KEY = 'attendease-employees';
+=======
+const EMPLOYEES_KEY = 'Orbinova-employees';
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
 
 export function getAllEmployees(): Employee[] {
   return getItem<Employee[]>(EMPLOYEES_KEY) || [];
@@ -13,11 +17,14 @@ export function getEmployeeById(id: string): Employee | undefined {
   return employees.find(emp => emp.id === id);
 }
 
+<<<<<<< HEAD
 export function doesHrIdExist(employeeId: string): boolean {
   const employees = getAllEmployees();
   return employees.some(emp => emp.id === employeeId && emp.designation === 'HR');
 }
 
+=======
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
 export function addEmployee(newEmployeeData: Omit<Employee, 'password' | 'id'> & { id: string; passwordInput: string }): { success: boolean, message?: string } {
   const employees = getAllEmployees();
   if (employees.some(emp => emp.id === newEmployeeData.id)) {
@@ -75,4 +82,7 @@ export function removeEmployee(employeeId: string): { success: boolean, message?
   // Consider also removing associated attendance records or anonymizing them
   return { success: true };
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 4dad47e2bf19a5cfe0a46d24b505fba4ef12689a
